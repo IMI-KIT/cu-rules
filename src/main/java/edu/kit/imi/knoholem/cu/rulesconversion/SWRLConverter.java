@@ -1,0 +1,104 @@
+package edu.kit.imi.knoholem.cu.rulesconversion;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.kit.imi.knoholem.cu.rules.logicalentities.Atom;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.ClassAtom;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.Individual;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.PropertyAtom;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.Unknown;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.Value;
+import edu.kit.imi.knoholem.cu.rules.parser.Operator;
+import edu.kit.imi.knoholem.cu.rules.parser.Predicate;
+import edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule;
+
+public class SWRLConverter {
+
+	private SWRLConverterConfiguration configuration;
+
+	public SWRLConverter(SWRLConverterConfiguration configuration) {
+		this.configuration = configuration;
+	}
+
+	public SWRLRule convertRule(SensitivityAnalysisRule rule) {
+		Unknowns unknowns = new Unknowns();
+		List<Atom> antecedent = collectAntecedent(rule.getAntecedent(), unknowns);
+		List<Atom> consequent = collectConsequent(rule.getConsequent(), unknowns);
+		SWRLRule swrlRule = new SWRLRule();
+		swrlRule.setAntecedent(antecedent);
+		swrlRule.setConsequent(consequent);
+		swrlRule.setMetadata(rule.getMetadata());
+		return swrlRule;
+	}
+
+	private List<Atom> collectAntecedent(List<Predicate> inputAntecedent, Unknowns unknowns) {
+		List<Atom> result = new ArrayList<Atom>();
+		for (Predicate predicate: inputAntecedent) {
+			result.addAll(convertSensorValuePredicate(predicate, unknowns));
+		}
+		return result;
+	}
+
+	private List<Atom> collectConsequent(List<Predicate> inputConsequent, Unknowns unknowns) {
+		List<Atom> result = new ArrayList<Atom>();
+		for (Predicate predicate: inputConsequent) {
+			result.addAll(convertConsequentPredicate(predicate, unknowns));
+		}
+		return result;
+	}
+
+	private List<Atom> convertConsequentPredicate(Predicate predicate, Unknowns unknowns) {
+		List<Atom> result = new ArrayList<Atom>();
+
+		Individual individual = new Individual(predicate.getLeftOperand().asString());
+		Value value = new Value(predicate.getRightOperand().asString());
+
+		result.add(new PropertyAtom(configuration.sensorValueProperty(), individual, value));
+
+		return result;
+	}
+
+	private List<Atom> convertSensorValuePredicate(Predicate predicate, Unknowns unknowns) {
+		List<Atom> result = new LinkedList<Atom>();
+
+		Individual individual = new Individual(predicate.getLeftOperand().asString());
+		Value value = new Value(predicate.getRightOperand().asString());
+		Unknown unknown = unknowns.nextUnknown();
+
+		result.add(new ClassAtom(configuration.sensorClass(), individual));
+		result.add(new PropertyAtom(configuration.sensorValueProperty(), individual, unknown));
+		result.add(new PropertyAtom(builtIn(predicate.getOperator()), unknown, value));
+		return result;
+	}
+
+	private int findZoneId(List<Predicate> antecedent) {
+		return findRelationBySubject(configuration.zoneKey(), antecedent);
+	}
+
+	private int findOccupancy(List<Predicate> antecedent) {
+		return findRelationBySubject(configuration.occupancyKey(), antecedent);
+	}
+
+	private int findRelationBySubject(String subjectKey, List<Predicate> predicates) {
+		for (int i = 0; i < predicates.size(); i++) {
+			if (predicates.get(i).getLeftOperand().asString().equals(subjectKey)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private String builtIn(Operator operator) {
+		switch (operator) {
+		case GREATER_THAN_OR_EQUAL: return "greaterThanOrEqual";
+		case GREATER_THAN: return "greaterThan";
+		case LESS_THAN_OR_EQUAL: return "lessThanOrEqual";
+		case LESS_THAN: return "lessThan";
+		case EQUAL: return "equal";
+		default: throw new RuntimeException();
+		}
+	}
+
+}
