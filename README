@@ -1,0 +1,33 @@
+# CU-RULES[1]
+
+A library for processing sensitivity analysis rules.
+
+# Installation
+
+The library builds with maven. Ensure that you have a maven installation,
+issuing for example:
+
+  mvn -v
+
+If this fails, follow the installation instructions on the [maven
+website][2].
+
+A jar package can be produced via:
+
+  mvn package
+
+It will be placed under the target subdirectory. You can add the jar in
+your classpath manually, or alternatively, if you use maven, install it
+by:
+
+  mvn install
+
+# Running
+
+The jar package has a main entry point which allows you to convert the
+sensitivity analysis rules and print the results on the standard output.
+
+  java -jar target/cu-rules-0.0.1-SNAPSHOT.jar /path/to/rules
+
+[1]: It does!
+[2]: http://maven.apache.org/ "Apache Maven"

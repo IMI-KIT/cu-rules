@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.kit.imi.knoholem.cu</groupId>
-  <artifactId>edu.kit.imi.knoholem.cu</artifactId>
+  <artifactId>cu-rules</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.7</java.version>
+    <java.version>1.6</java.version>
   </properties>
 
   <dependencies>
@@ -34,6 +34,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <archive>
             <manifest>
