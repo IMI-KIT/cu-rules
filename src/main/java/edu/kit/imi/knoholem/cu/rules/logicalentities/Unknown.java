@@ -1,6 +1,6 @@
 package edu.kit.imi.knoholem.cu.rules.logicalentities;
 
-public class Unknown extends Variable {
+public class Unknown implements Variable {
 
 	private final String name;
 

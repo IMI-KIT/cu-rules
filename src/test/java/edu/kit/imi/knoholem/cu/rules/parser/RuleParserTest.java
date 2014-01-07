@@ -27,9 +27,9 @@ public class RuleParserTest {
 	public void testPredicateContents() {
 		RuleParser parser = new RuleParser(new DefaultRuleParserConfiguration());
 		SensitivityAnalysisRule rule = parser.parseRule(ruleLiteral);
-		assert rule.getAntecedent().contains(new Predicate("ZoneID", "=", "RC0.13ATRMGRND"));
-		assert rule.getAntecedent().contains(new Predicate("6", ">=", "14.31"));
-		assert rule.getAntecedent().contains(new Predicate("6", "<=", "15.04"));
+		assertTrue(rule.getAntecedent().contains(new Predicate("ZoneID", "=", "RC0.13ATRMGRND")));
+		assertTrue(rule.getAntecedent().contains(new Predicate("6", ">=", "14.31")));
+		assertTrue(rule.getAntecedent().contains(new Predicate("6", "<=", "15.04")));
 	}
 
 	@Test
