@@ -3,7 +3,10 @@ package edu.kit.imi.knoholem.cu.rulesconversion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.kit.imi.knoholem.cu.rules.logicalentities.Atom;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleMetadata;
@@ -42,18 +45,6 @@ public class SWRLRule {
 		return ruleExpression.toString();
 	}
 
-	private String joinAtoms(List<Atom> atomList, String connective) {
-		if (atomList.isEmpty()) {
-			return "";
-		}
-		StringBuilder expression = new StringBuilder();
-		for (int i = 0; i < atomList.size() - 1; i++) {
-			expression.append(atomList.get(i).getExpression()).append(connective);
-		}
-		expression.append(atomList.get(atomList.size() - 1).getExpression());
-		return expression.toString();
-	}
-
 	@Override
 	public String toString() {
 		return new StringBuilder().append(getClass()).append("{").append("}").toString();
@@ -64,11 +55,35 @@ public class SWRLRule {
 	}
 
 	void setAntecedent(Collection<Atom> atoms) {
-		antecedent.addAll(atoms);
+		antecedent.clear();
+		antecedent.addAll(uniqueAtomsList(atoms));
 	}
 
 	void setConsequent(Collection<Atom> atoms) {
-		consequent.addAll(atoms);
+		consequent.clear();
+		consequent.addAll(uniqueAtomsList(atoms));
+	}
+
+	private List<Atom> uniqueAtomsList(Collection<? extends Atom> atoms) {
+		List<Atom> uniques = new ArrayList<Atom>(atoms.size());
+		Set<Atom> atomSet = new LinkedHashSet<Atom>();
+		for (Atom atom : atoms) {
+			atomSet.add(atom);
+		}
+		uniques.addAll(atomSet);
+		return uniques;
+	}
+
+	private String joinAtoms(List<Atom> atomList, String connective) {
+		if (atomList.isEmpty()) {
+			return "";
+		}
+		StringBuilder expression = new StringBuilder();
+		for (int i = 0; i < atomList.size() - 1; i++) {
+			expression.append(atomList.get(i).getExpression()).append(connective);
+		}
+		expression.append(atomList.get(atomList.size() - 1).getExpression());
+		return expression.toString();
 	}
 
 }
