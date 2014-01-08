@@ -4,8 +4,9 @@ Here's a currenet list of todo items, more or less ordered by priority.
 
  - Make the parser configuration automatically configurable (based on keys).
  - Logical linking in the atoms in the SWRL converter.
+ - Minimal handling of erroneous sensitivity analysis rules.
  - Rule atom filtering.
  - Documentation.
  - Introduce typed literals.
  - Unify the logical entities interface.
- - Errors.
+ - Introduce errors.

@@ -6,6 +6,7 @@ package edu.kit.imi.knoholem.cu.rules.parser;
  * 
  * @see Literal
  * @see SensitivityAnalysisRule
+ * 
  * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  */
 public class Predicate {

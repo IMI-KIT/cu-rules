@@ -5,8 +5,6 @@ import java.util.List;
 
 public abstract class Atom implements SWRLExpression {
 
-	public static final String CONNECTIVE = ", ";
-
 	protected final List<Variable> variables;
 	protected final int arity;
 	protected final String name;
@@ -30,6 +28,12 @@ public abstract class Atom implements SWRLExpression {
 		expression.append(variables.get(variables.size() - 1).getExpression());
 		expression.append(")");
 		return expression.toString();
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append(getClass().getSimpleName()).append("{ ")
+				.append("expression=\"").append(getExpression()).append("\" }").toString();
 	}
 
 	@Override

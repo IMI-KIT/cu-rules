@@ -1,4 +1,4 @@
-package edu.kit.imi.knoholem.cu.rules.parser;
+package edu.kit.imi.knoholem.cu.rulesconversion;
 
 import static org.junit.Assert.*;
 

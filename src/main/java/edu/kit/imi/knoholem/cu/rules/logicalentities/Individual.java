@@ -40,7 +40,7 @@ public class Individual implements Variable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass()).append("{")
+		return new StringBuilder().append(getClass().getSimpleName()).append("{")
 				.append(" name=").append("\"").append(name).append("\"")
 				.append(" }").toString();
 	}

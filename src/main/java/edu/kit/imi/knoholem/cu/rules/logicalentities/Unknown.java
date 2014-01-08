@@ -40,7 +40,7 @@ public class Unknown implements Variable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{").append("variable=").append(getExpression()).append("}").toString();
+		return new StringBuilder().append(getClass().getSimpleName()).append("{").append(" ").append(getExpression()).append(" ").append("}").toString();
 	}
 
 }

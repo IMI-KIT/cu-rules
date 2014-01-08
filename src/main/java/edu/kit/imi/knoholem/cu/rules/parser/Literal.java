@@ -9,7 +9,7 @@ public class Literal {
 	private final String value;
 
 	Literal(String value) {
-		this.value = cleanUp(value);
+		this.value = removePercentSign(value);
 	}
 
 	public String asString() {
@@ -73,7 +73,7 @@ public class Literal {
 		return true;
 	}
 
-	private String cleanUp(String originalValue) {
+	private String removePercentSign(String originalValue) {
 		if (originalValue.charAt(originalValue.length() - 1) == '%') {
 			return originalValue.substring(0, originalValue.length() - 1);
 		}

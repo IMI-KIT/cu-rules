@@ -3,7 +3,7 @@
 
   <groupId>edu.kit.imi.knoholem.cu</groupId>
   <artifactId>cu-rules</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +17,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -45,4 +46,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

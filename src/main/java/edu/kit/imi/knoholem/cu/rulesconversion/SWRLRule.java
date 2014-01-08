@@ -8,15 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 import edu.kit.imi.knoholem.cu.rules.logicalentities.Atom;
+import edu.kit.imi.knoholem.cu.rules.logicalentities.SWRLExpression;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleMetadata;
 
-public class SWRLRule {
-
-	private static final String THEN = " -> ";
-	private static final String CONNECTIVE = ", ";
+public class SWRLRule implements SWRLExpression {
 
 	private final List<Atom> antecedent;
 	private final List<Atom> consequent;
+
 	private RuleMetadata metadata;
 
 	SWRLRule() {
@@ -24,7 +23,7 @@ public class SWRLRule {
 		this.consequent = new ArrayList<Atom>();
 	}
 
-	public List<Atom> getAntecenent() {
+	public List<Atom> getAntecedent() {
 		return Collections.unmodifiableList(antecedent);
 	}
 
@@ -36,6 +35,7 @@ public class SWRLRule {
 		return metadata;
 	}
 
+	@Override
 	public String getExpression() {
 		StringBuilder ruleExpression = new StringBuilder();
 		ruleExpression.append(joinAtoms(antecedent, CONNECTIVE));
@@ -45,8 +45,48 @@ public class SWRLRule {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((antecedent == null) ? 0 : antecedent.hashCode());
+		result = prime * result
+				+ ((consequent == null) ? 0 : consequent.hashCode());
+		result = prime * result
+				+ ((metadata == null) ? 0 : metadata.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SWRLRule other = (SWRLRule) obj;
+		if (antecedent == null) {
+			if (other.antecedent != null)
+				return false;
+		} else if (!antecedent.equals(other.antecedent))
+			return false;
+		if (consequent == null) {
+			if (other.consequent != null)
+				return false;
+		} else if (!consequent.equals(other.consequent))
+			return false;
+		if (metadata == null) {
+			if (other.metadata != null)
+				return false;
+		} else if (!metadata.equals(other.metadata))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass()).append("{").append("}").toString();
+		return new StringBuilder().append(getClass().getSimpleName()).append("{").append("}").toString();
 	}
 
 	void setMetadata(RuleMetadata metadata) {
@@ -61,6 +101,14 @@ public class SWRLRule {
 	void setConsequent(Collection<Atom> atoms) {
 		consequent.clear();
 		consequent.addAll(uniqueAtomsList(atoms));
+	}
+
+	void addAntecedent(Atom atom) {
+		antecedent.add(atom);
+	}
+
+	void addConsequenet(Atom atom) {
+		consequent.add(atom);
 	}
 
 	private List<Atom> uniqueAtomsList(Collection<? extends Atom> atoms) {
