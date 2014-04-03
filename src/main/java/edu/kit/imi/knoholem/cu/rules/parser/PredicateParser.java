@@ -4,16 +4,19 @@ class PredicateParser {
 
 	private final String literal;
 	private final int indexOfOperator;
+	
 
 	PredicateParser(String literal) {
 		this.literal = literal.trim();
 		this.indexOfOperator = indexOfOperator(this.literal);
 	}
-
+	
+		
 	public String getLeftLiteral() {
-		return leftSide().trim();
+		return literal.substring(0, indexOfOperator).trim();
 	}
 
+	
 	public String getOperator() {
 		StringBuilder operator = new StringBuilder();
 		if (indexOfOperator == -1) {
@@ -26,10 +29,12 @@ class PredicateParser {
 		return operator.toString();
 	}
 
+	
 	public String getRightLiteral() {
-		return rightSide().trim();
+		return literal.substring(indexOfOperator + getOperator().length()).trim();
 	}
 
+	
 	@Override
 	public String toString() {
 		return new StringBuilder().append(getClass().getSimpleName()).append("{")
@@ -37,6 +42,7 @@ class PredicateParser {
 				.append("}").toString();
 	}
 
+	
 	private int indexOfOperator(String literal) {
 		for (int i = 0; i < literal.length(); i++) {
 			if (isPartOfOperator(literal, i)) {
@@ -46,16 +52,9 @@ class PredicateParser {
 		return -1;
 	}
 
+	
 	private boolean isPartOfOperator(String literal, int index) {
 		return literal.charAt(index) == '>' || literal.charAt(index) == '<' || literal.charAt(index) == '=';
-	}
-
-	private String rightSide() {
-		return literal.substring(indexOfOperator + getOperator().length()).trim();
-	}
-	
-	private String leftSide() {
-		return literal.substring(0, indexOfOperator).trim();
 	}
 
 }
