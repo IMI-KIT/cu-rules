@@ -50,12 +50,13 @@ public class SWRLRuleExporter {
 	private SWRLRule convertRule(SensitivityAnalysisRule rule) {
 		SWRLRule convertedRule = null;
 
-			System.out.println(rule.toString());
+//			System.out.println(rule.toString());
 			
 			Set<SWRLAtom> ruleBody = new HashSet<>(collectAntecedent(rule.getAntecedent()));
 			Set<SWRLAtom> ruleHead = new HashSet<>(collectConsequent(rule.getConsequent()));
 			
-			convertedRule = ontology.getFactory().getSWRLRule(ruleBody, ruleHead, ruleAnnotations("Energy anomaly", new Float(rule.getMetadata().getWeight())));
+			String suggestionText = rule.getMetadata().getType() + " = " + rule.getMetadata().getReduction();
+			convertedRule = ontology.getFactory().getSWRLRule(ruleBody, ruleHead, ruleAnnotations(suggestionText, new Float(rule.getMetadata().getWeight())));
 
 		return convertedRule;
 	}

@@ -31,7 +31,11 @@ public class OntologyNameParser {
 		Set<OWLNamedIndividual> zones = reasoner.getInstances(zoneClass, false).getFlattened();
 		
 		for(OWLNamedIndividual zone : zones){
-			OWLLiteral zoneNameLiteral = (OWLLiteral) reasoner.getDataPropertyValues(zone, hasNameProperty).toArray()[0];
+			Set<OWLLiteral> zoneNames = reasoner.getDataPropertyValues(zone, hasNameProperty);
+			if(zoneNames.size() == 0){
+				continue;
+			}
+			OWLLiteral zoneNameLiteral = (OWLLiteral) zoneNames.toArray()[0];
 			if(zoneNameLiteral.getLiteral().equals(zoneId)){
 				return getOccupancySensorName(zone, zoneId);
 			}

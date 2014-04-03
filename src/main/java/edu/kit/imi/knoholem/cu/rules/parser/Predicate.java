@@ -11,7 +11,7 @@ package edu.kit.imi.knoholem.cu.rules.parser;
  */
 public class Predicate {
 
-	private final String leftOperand;
+	private String leftOperand;
 	private final String rightOperand;
 	private final Operator operator;
 
@@ -31,6 +31,10 @@ public class Predicate {
 
 	public Operator getOperator() {
 		return operator;
+	}
+
+	public void resetLeftOperand(String leftLiteral) {
+		this.leftOperand = leftLiteral;	
 	}
 
 	@Override

@@ -36,6 +36,11 @@ public class RuleParser {
 		rule.setAntecedent(premisePredicates);
 		rule.setConsequent(conclusionPredicates);
 		rule.setMetadata(parseRuleMetadata(premiseTokens(ruleLiteral)));
+		
+		for(String name : unknownNames){
+			System.out.println(name);
+		}
+		
 		return rule;
 	}
 
@@ -118,7 +123,7 @@ public class RuleParser {
 				}else{
 					if(pred.getLeftOperand().asString().equals("ZoneID")){
 						zoneId = pred.getRightOperand().asString();
-						i=0;
+						i=-1;
 						zoneIdFound = true;
 					}
 					if(i == premiseTokens.length-1){
@@ -159,11 +164,12 @@ public class RuleParser {
 			if(mappedName == null){
 				unknownNames.add(leftLiteral);
 			}
-			if(mappedName.equals("-2") || leftLiteral.contains(OCCUPANCYIDSEQUENCE)){
+			if((mappedName != null && mappedName.equals("-2")) || leftLiteral.contains(OCCUPANCYIDSEQUENCE)){
 				leftLiteral = new OntologyNameParser().parseName(leftLiteral, zoneId);	
 			}else if(mappedName != null){
 				leftLiteral = mappedName;
 			}
+			pred.resetLeftOperand(leftLiteral);
 		}
 	}
 
