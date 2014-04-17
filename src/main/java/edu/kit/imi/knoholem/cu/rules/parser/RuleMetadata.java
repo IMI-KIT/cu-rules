@@ -11,6 +11,7 @@ import java.util.Calendar;
  */
 public class RuleMetadata {
 
+    private final String zoneId;
 	private final Calendar date;
 	private final String type;
 	private final Double weight;
@@ -24,14 +25,19 @@ public class RuleMetadata {
 	 * @param weight
 	 * @param reduction
 	 */
-	public RuleMetadata(Calendar date, String type, Double weight, Double reduction) {
+	public RuleMetadata(String zoneId, Calendar date, String type, Double weight, Double reduction) {
+        this.zoneId = zoneId;
 		this.date = date;
 		this.type = type;
 		this.weight = weight;
 		this.reduction = reduction;
 	}
 
-	/**
+    public String getZoneId() {
+        return zoneId;
+    }
+
+    /**
 	 * Returns the rule date. The {@link Calendar} object returned has only its
 	 * month, day and hour fields set.
 	 * 
@@ -68,58 +74,41 @@ public class RuleMetadata {
 		return reduction;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result
-				+ ((reduction == null) ? 0 : reduction.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RuleMetadata other = (RuleMetadata) obj;
-		if (date == null) {
-			if (other.date != null)
-				return false;
-		} else if (!date.equals(other.date))
-			return false;
-		if (reduction == null) {
-			if (other.reduction != null)
-				return false;
-		} else if (!reduction.equals(other.reduction))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		if (weight == null) {
-			if (other.weight != null)
-				return false;
-		} else if (!weight.equals(other.weight))
-			return false;
-		return true;
-	}
+        RuleMetadata that = (RuleMetadata) o;
 
-	@Override
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (reduction != null ? !reduction.equals(that.reduction) : that.reduction != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (weight != null ? !weight.equals(that.weight) : that.weight != null) return false;
+        if (zoneId != null ? !zoneId.equals(that.zoneId) : that.zoneId != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zoneId != null ? zoneId.hashCode() : 0;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (reduction != null ? reduction.hashCode() : 0);
+        return result;
+    }
+
+    @Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{")
-				.append("weight=").append(weight)
-				.append(" date=").append(date)
-				.append(" type=\"").append(type).append("\"")
-				.append(" reduction=").append(reduction)
-				.append("}").toString();
+		return getClass().getSimpleName() + "{ "
+                + "zoneId=\"" + zoneId + "\"" + " "
+				+ "weight=" + weight + " "
+				+ "date=" + date + " "
+				+ "type=\"" + type + "\"" + " "
+				+ "reduction=" + reduction + " "
+				+ "}";
 	}
 
 }

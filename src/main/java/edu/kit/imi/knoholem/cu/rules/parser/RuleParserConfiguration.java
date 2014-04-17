@@ -1,42 +1,55 @@
 package edu.kit.imi.knoholem.cu.rules.parser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class RuleParserConfiguration {
 
-	private final static RuleParserConfiguration defaultConfiguration = new DefaultRuleParserConfiguration();
+    private final static RuleParserConfiguration defaultConfiguration = new DefaultRuleParserConfiguration();
 
-	public abstract int weightIndex();
-	public abstract int typeIndex();
-	public abstract int reductionIndex();
+    public static RuleParserConfiguration getDefaultConfiguration() {
+        return defaultConfiguration;
+    }
 
-	public abstract int monthIndex();
-	public abstract int dayIndex();
-	public abstract int hourIndex();
+    public abstract int zoneIdIndex();
 
-	public abstract String andLiteral();
-	public abstract String ifLiteral();
-	public abstract String thenLiteral();
+    public abstract int weightIndex();
 
-	public static RuleParserConfiguration getDefaultConfiguration() {
-		return defaultConfiguration;
-	}
+    public abstract int typeIndex();
 
-	public List<Integer> metadataFields() {
-		List<Integer> metadataFields = new ArrayList<Integer>(6);
-		metadataFields.add(weightIndex());
-		metadataFields.add(typeIndex());
-		metadataFields.add(reductionIndex());
-		metadataFields.add(monthIndex());
-		metadataFields.add(dayIndex());
-		metadataFields.add(hourIndex());
-		return Collections.unmodifiableList(metadataFields);
-	}
+    public abstract int reductionIndex();
 
-	public int ifOffset() {
-		return ifLiteral().length();
-	}
+    public abstract int monthIndex();
+
+    public abstract int dayIndex();
+
+    public abstract int hourIndex();
+
+    public abstract String andLiteral();
+
+    public abstract String ifLiteral();
+
+    public abstract String thenLiteral();
+
+    public int ifOffset() {
+        return ifLiteral().length();
+    }
+
+    public List<Integer> metadataFields() {
+        List<Integer> fieldsList = Arrays.asList(zoneIdIndex(), weightIndex(), typeIndex(), reductionIndex(), monthIndex(), dayIndex(), hourIndex());
+        List<Integer> nonNegativeIndices = nonNegativeIntegers(fieldsList);
+        return Collections.unmodifiableList(nonNegativeIndices);
+    }
+
+    private List<Integer> nonNegativeIntegers(Collection<Integer> integers) {
+        List<Integer> result = new ArrayList<Integer>(integers.size());
+
+        for (Integer integerElement : integers) {
+            if (integerElement >= 0) {
+                result.add(integerElement);
+            }
+        }
+
+        return result;
+    }
 
 }

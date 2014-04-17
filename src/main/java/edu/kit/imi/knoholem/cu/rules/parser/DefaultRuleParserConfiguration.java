@@ -2,7 +2,12 @@ package edu.kit.imi.knoholem.cu.rules.parser;
 
 public class DefaultRuleParserConfiguration extends RuleParserConfiguration {
 
-	@Override
+    @Override
+    public int zoneIdIndex() {
+        return 0;
+    }
+
+    @Override
 	public int weightIndex() {
 		return 1;
 	}
