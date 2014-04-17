@@ -20,10 +20,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-    	<groupId>knoholem</groupId>
-    	<artifactId>KnoHolEMOntology</artifactId>
-    </dependency>
   </dependencies>
 
   <build>

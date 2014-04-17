@@ -86,7 +86,7 @@ public class SWRLRule implements SWRLExpression {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{").append("}").toString();
+		return getClass().getSimpleName() + "{" + "}";
 	}
 
 	void setMetadata(RuleMetadata metadata) {

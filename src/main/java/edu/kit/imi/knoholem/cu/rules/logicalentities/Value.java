@@ -40,8 +40,7 @@ public class Value implements Variable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{ value=")
-				.append("\"").append(value).append("\" ").append("}").toString();
+		return getClass().getSimpleName() + "{ value=\"" + value + "\" }";
 	}
 
 }

@@ -32,8 +32,7 @@ public abstract class Atom implements SWRLExpression {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{ ")
-				.append("expression=\"").append(getExpression()).append("\" }").toString();
+		return getClass().getSimpleName() + "{ expression=\"" + getExpression() + "\" }";
 	}
 
 	@Override

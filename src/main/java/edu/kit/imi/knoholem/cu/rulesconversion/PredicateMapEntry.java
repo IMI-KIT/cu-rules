@@ -34,9 +34,9 @@ class PredicateMapEntry {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(getClass().getSimpleName()).append("{")
-				.append(" classifier=\"").append(classifier.asString()).append("\" ")
-				.append("size=").append(predicates.size()).append("}").toString();
+		return getClass().getSimpleName() + "{ classifier=\"" + classifier.asString() + "\""
+				+ " " + "size=" + predicates.size()
+				+ " }";
 	}
 
 }

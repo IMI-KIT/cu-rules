@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.text.ZoneView;
-
 public class RuleParser {
 
 	private final String OCCUPANCYIDSEQUENCE = "cupan";
@@ -21,13 +19,11 @@ public class RuleParser {
 		this.metadataFields = this.configuration.metadataFields();
 	}
 
-	
 	public RuleParser(RuleParserConfiguration configuration, Properties mappingProps) {
 		this.configuration = configuration;
 		this.metadataFields = this.configuration.metadataFields();
 		this.mappingProps = mappingProps;
 	}
-
 
 	public SensitivityAnalysisRule parseRule(String ruleLiteral) {
 		List<Predicate> premisePredicates = collectPremisePredicates(premiseTokens(ruleLiteral));
@@ -43,7 +39,6 @@ public class RuleParser {
 		
 		return rule;
 	}
-
 	
 	private RuleMetadata parseRuleMetadata(String[] premiseTokens) {
 		double weight = parseRuleWeight(premiseTokens);
@@ -52,22 +47,18 @@ public class RuleParser {
 		Calendar date = parseRuleDate(premiseTokens);
 		return new RuleMetadata(date, type, weight, reduction);
 	}
-
 	
 	private Double parseRuleWeight(String[] premiseTokens) {
 		return parsePredicate(premiseTokens[configuration.weightIndex()]).getRightOperand().asDouble();
 	}
-
 	
 	private Double parseReductionRate(String[] premiseTokens) {
 		return parsePredicate(premiseTokens[configuration.reductionIndex()]).getRightOperand().asDouble();
 	}
-
 	
 	private String parseRuleType(String[] premiseTokens) {
 		return parsePredicate(premiseTokens[configuration.typeIndex()]).getRightOperand().asString();
 	}
-
 	
 	private Calendar parseRuleDate(String[] premiseTokens) {
 		Calendar calendar = Calendar.getInstance();
@@ -79,7 +70,6 @@ public class RuleParser {
 		calendar.set(Calendar.HOUR, hour);
 		return calendar;
 	}
-
 	
 	private String[] premiseTokens(String ruleLiteral) {
 		String[] split = ruleLiteral.split(configuration.thenLiteral());
@@ -88,12 +78,10 @@ public class RuleParser {
 		}
 		return splitInTokens(split[0]);
 	}
-
 	
 	private String[] splitInTokens(String rulePartLiteral) {
 		return rulePartLiteral.split(configuration.andLiteral());
 	}
-
 	
 	private String[] conclusionTokens(String ruleLiteral) {
 		String[] split = ruleLiteral.split(configuration.thenLiteral());
@@ -102,7 +90,6 @@ public class RuleParser {
 		}
 		return splitInTokens(split[1]);
 	}
-
 	
 	private List<Predicate> collectPremisePredicates(String[] premiseTokens) {
 		List<Predicate> predicates = new LinkedList<Predicate>();
@@ -135,7 +122,6 @@ public class RuleParser {
 		}
 		return predicates;
 	}
-
 	
 	private List<Predicate> collectConclusionPredicates(String[] conclusionTokens) {
 		List<Predicate> predicates = new LinkedList<Predicate>();
@@ -149,13 +135,11 @@ public class RuleParser {
 		return predicates;
 	}
 
-
 	private Predicate parsePredicate(String predicateLiteral) {
 		PredicateParser parser = new PredicateParser(predicateLiteral);
 		Predicate predicate = new Predicate(parser.getLeftLiteral(), parser.getOperator(), parser.getRightLiteral());
 		return predicate;
 	}
-
 
 	private void testPredicate(Predicate pred, String zoneId) {
 		if(mappingProps != null){
