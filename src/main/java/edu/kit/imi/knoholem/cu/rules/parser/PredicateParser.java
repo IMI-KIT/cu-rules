@@ -6,6 +6,10 @@ class PredicateParser {
     private final int indexOfOperator;
 
     PredicateParser(String literal) {
+        if (indexOfOperator(literal) < 0) {
+            throw new IllegalArgumentException("No operator in predicate + \"" + literal + "\"");
+        }
+
         this.literal = literal.trim();
         this.indexOfOperator = indexOfOperator(this.literal);
     }
@@ -16,13 +20,12 @@ class PredicateParser {
 
     public String getOperator() {
         StringBuilder operator = new StringBuilder();
-        if (indexOfOperator == -1) {
-            throw new RuntimeException("Invalid Literal. No operator in predicate " + literal);
-        }
+
         operator.append(literal.charAt(indexOfOperator));
         if (literal.charAt(indexOfOperator + 1) == '=') {
             operator.append(literal.charAt(indexOfOperator + 1));
         }
+
         return operator.toString();
     }
 

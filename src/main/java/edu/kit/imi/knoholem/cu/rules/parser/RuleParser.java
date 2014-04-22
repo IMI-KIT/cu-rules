@@ -13,14 +13,18 @@ public class RuleParser {
     }
 
     public SensitivityAnalysisRule parseRule(String ruleLiteral) {
-        RuleLiteral parsedLiteral = new RuleLiteral(ruleLiteral, configuration);
+        try {
+            RuleLiteral parsedLiteral = new RuleLiteral(ruleLiteral, configuration);
 
-        SensitivityAnalysisRule rule = new SensitivityAnalysisRule();
-        rule.setAntecedent(collectPredicates(parsedLiteral.getAntecedentAtoms()));
-        rule.setConsequent(collectPredicates(parsedLiteral.getConsequentAtoms()));
-        rule.setMetadata(parseRuleMetadata(parsedLiteral));
+            SensitivityAnalysisRule rule = new SensitivityAnalysisRule();
+            rule.setAntecedent(collectPredicates(parsedLiteral.getAntecedentAtoms()));
+            rule.setConsequent(collectPredicates(parsedLiteral.getConsequentAtoms()));
+            rule.setMetadata(parseRuleMetadata(parsedLiteral));
 
-        return rule;
+            return rule;
+        } catch (Throwable t) {
+            throw new RuleParseError(ruleLiteral, t);
+        }
     }
 
     private RuleMetadata parseRuleMetadata(RuleLiteral ruleLiteral) {

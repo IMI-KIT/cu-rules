@@ -133,7 +133,7 @@ public class RuleLiteral {
 
     private boolean assertSplitArraySize(Object[] array, int expectedSize) {
         if (array.length < expectedSize) {
-            throw new ParserConfigurationError("Rule configuration for literal \"" + ruleLiteral + "\" incorrect or invalid rule given.");
+            throw new ParserConfigurationError(ruleLiteral, "Rule configuration incorrect or invalid rule given.");
         }
 
         return true;
