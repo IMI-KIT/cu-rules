@@ -5,8 +5,10 @@ import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.process.RuleFileParser;
 import edu.kit.imi.knoholem.cu.rules.process.RuleProcessor;
+import edu.kit.imi.knoholem.cu.rules.process.RuleProcessorResponse;
 import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverter;
 import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rulesconversion.SWRLRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,11 +42,11 @@ public class ConvertRules {
 
         fileParser.process(processor);
 
-        System.out.printf("\n---\nRules converted: %d\nErrors encountered: %d\n", processor.getRuleCount(), processor.getFailCount());
+        System.err.printf("\n---\nRules converted: %d\nErrors encountered: %d\n", processor.getRuleCount(), processor.getFailCount());
 
-        System.out.printf("\nLast %d errors:\n", processor.getFailCapacity());
+        System.err.printf("\nLast %d errors:\n", processor.getFailCapacity());
         for (RuleParseError error : processor.getErrors()) {
-            System.out.println(error.getMessage() + " (" + error.getRuleLiteral() + ")");
+            System.err.println(error.getMessage() + " (" + error.getRuleLiteral() + ")");
         }
     }
 
@@ -77,18 +79,21 @@ public class ConvertRules {
         }
 
         @Override
-        public void onParse(SensitivityAnalysisRule rule) {
-            System.out.println(converter.convertRule(rule).getExpression());
+        public RuleProcessorResponse onParse(SensitivityAnalysisRule rule) {
+            SWRLRule swrlRule = converter.convertRule(rule);
+            System.out.println(swrlRule.getExpression());
             ruleCount++;
+            return new Response(swrlRule);
         }
 
         @Override
-        public void onError(RuleParseError error) {
+        public RuleProcessorResponse onError(RuleParseError error) {
             if (failList.size() >= failCapacity) {
                 failList.poll();
             }
             failList.push(error);
             failCount++;
+            return new Response(null);
         }
 
         /**
@@ -127,6 +132,24 @@ public class ConvertRules {
             return Collections.unmodifiableList(failList);
         }
 
+        private class Response extends RuleProcessorResponse {
+
+            private final Object data;
+
+            private Response(Object data) {
+                this.data = data;
+            }
+
+            @Override
+            public Object getData() {
+                return data;
+            }
+
+            @Override
+            public boolean canContinue() {
+                return true;
+            }
+        }
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * @see edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule
  * @see edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration
  */
-public class RuleLiteral {
+class RuleLiteral {
 
     private final String ruleLiteral;
     private final RuleParserConfiguration configuration;

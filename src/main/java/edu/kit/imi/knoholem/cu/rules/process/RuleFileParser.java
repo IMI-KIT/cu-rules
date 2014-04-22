@@ -37,12 +37,15 @@ public class RuleFileParser {
     public void process(RuleProcessor ruleProcessor) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-        for (String ruleLiteral = reader.readLine(); ruleLiteral != null; ruleLiteral = reader.readLine()) {
-            RuleParser parser = new RuleParser(parserConfiguration);
-            try {
-                ruleProcessor.onParse(parser.parseRule(ruleLiteral));
-            } catch (RuleParseError error) {
-                ruleProcessor.onError(error);
+        {
+            RuleProcessorResponse response = RuleProcessorResponse.OK;
+            for (String ruleLiteral = reader.readLine(); ruleLiteral != null && response.canContinue(); ruleLiteral = reader.readLine()) {
+                RuleParser parser = new RuleParser(parserConfiguration);
+                try {
+                    response = ruleProcessor.onParse(parser.parseRule(ruleLiteral));
+                } catch (RuleParseError error) {
+                    response = ruleProcessor.onError(error);
+                }
             }
         }
 

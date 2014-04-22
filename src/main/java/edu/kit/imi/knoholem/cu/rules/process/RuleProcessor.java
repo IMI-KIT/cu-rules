@@ -19,13 +19,13 @@ public interface RuleProcessor {
      *
      * @param rule the parsed rule.
      */
-    public void onParse(SensitivityAnalysisRule rule);
+    public RuleProcessorResponse onParse(SensitivityAnalysisRule rule);
 
     /**
      * Processes a parse error.
      *
      * @param error the error to process.
      */
-    public void onError(RuleParseError error);
+    public RuleProcessorResponse onError(RuleParseError error);
 
 }

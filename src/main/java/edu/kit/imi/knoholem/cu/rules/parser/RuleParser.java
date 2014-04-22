@@ -45,7 +45,9 @@ public class RuleParser {
     }
 
     private Double parseReductionRate(RuleLiteral ruleLiteral) {
-        return parsePredicate(ruleLiteral.getReductionAtom()).getRightOperand().asDouble();
+        String reductionAtom = ruleLiteral.getReductionAtom();
+        reductionAtom = removePercentSign(reductionAtom);
+        return parsePredicate(reductionAtom).getRightOperand().asDouble();
     }
 
     private String parseRuleType(RuleLiteral ruleLiteral) {
@@ -74,6 +76,13 @@ public class RuleParser {
     private Predicate parsePredicate(String predicateLiteral) {
         PredicateParser parser = new PredicateParser(predicateLiteral);
         return new Predicate(parser.getLeftLiteral(), parser.getOperator(), parser.getRightLiteral());
+    }
+
+    private String removePercentSign(String originalValue) {
+        if (originalValue.charAt(originalValue.length() - 1) == '%') {
+            return originalValue.substring(0, originalValue.length() - 1);
+        }
+        return originalValue;
     }
 
 }

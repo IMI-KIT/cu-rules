@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-public class DynamicRuleParserConfiguration extends RuleParserConfiguration {
+class DynamicRuleParserConfiguration extends RuleParserConfiguration {
 
     public final static String defaultIfLiteral = "IF";
     public final static String defaultAndLiteral = "\\^";

@@ -1,6 +1,6 @@
 package edu.kit.imi.knoholem.cu.rulesconversion;
 
-public class DefaultSWRLConverterConfiguration extends SWRLConverterConfiguration {
+class DefaultSWRLConverterConfiguration extends SWRLConverterConfiguration {
 
 	@Override
 	public String zoneKey() {
