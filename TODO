@@ -1,12 +1,11 @@
 # TODO
 
-Here's a currenet list of todo items, more or less ordered by priority.
+Here's a current list of todo items, more or less ordered by priority.
 
- - Make the parser configuration automatically configurable (based on keys).
- - Logical linking in the atoms in the SWRL converter.
+ - Ontology interface.
  - Minimal handling of erroneous sensitivity analysis rules.
  - Rule atom filtering.
- - Documentation.
+ - Make the parser configuration automatically configurable (based on keys). To achieve this, split the configuration in rule syntax and predicate syntax.
  - Introduce typed literals.
  - Unify the logical entities interface.
- - Introduce errors.
+ - Documentation.
