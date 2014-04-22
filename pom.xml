@@ -12,6 +12,12 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>owlapi-distribution</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>

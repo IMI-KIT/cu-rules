@@ -96,15 +96,15 @@ public class SWRLConverter {
     private String builtIn(Operator operator) {
         switch (operator) {
             case GREATER_THAN_OR_EQUAL:
-                return "greaterThanOrEqual";
+                return SWRLExpression.SWRL_GREATER_THAN_OR_EQUAL;
             case GREATER_THAN:
-                return "greaterThan";
+                return SWRLExpression.SWRL_GREATER_THAN;
             case LESS_THAN_OR_EQUAL:
-                return "lessThanOrEqual";
+                return SWRLExpression.SWRL_LESS_THAN_OR_EQUAL;
             case LESS_THAN:
-                return "lessThan";
+                return SWRLExpression.SWRL_LESS_THAN;
             case EQUAL:
-                return "equal";
+                return SWRLExpression.SWRL_EQUAL;
             default:
                 throw new RuntimeException();
         }

@@ -21,7 +21,7 @@ public abstract class RuleProcessorResponse {
     /**
      * Indicates whether the parent processor can accept further input.
      *
-     * @return
+     * @return <code>true</code>, if subsequent inputs should be given, <code>false</code> otherwise.
      */
     public abstract boolean canContinue();
 
