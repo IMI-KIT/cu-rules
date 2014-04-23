@@ -8,7 +8,11 @@ public class Value implements Variable {
 		this.value = name;
 	}
 
-	@Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
 	public String getExpression() {
 		return value;
 	}

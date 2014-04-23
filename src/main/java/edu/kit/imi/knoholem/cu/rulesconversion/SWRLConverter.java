@@ -21,14 +21,18 @@ public class SWRLConverter {
     }
 
     public SWRLRule convertRule(SensitivityAnalysisRule rule) {
-        Unknowns unknowns = new Unknowns();
-        List<Atom> antecedent = collectAntecedent(rule.getAntecedent(), unknowns);
-        List<Atom> consequent = collectConsequent(rule.getConsequent(), unknowns);
-        SWRLRule swrlRule = new SWRLRule();
-        swrlRule.setAntecedent(antecedent);
-        swrlRule.setConsequent(consequent);
-        swrlRule.setMetadata(rule.getMetadata());
-        return swrlRule;
+        try {
+            Unknowns unknowns = new Unknowns();
+            List<Atom> antecedent = collectAntecedent(rule.getAntecedent(), unknowns);
+            List<Atom> consequent = collectConsequent(rule.getConsequent(), unknowns);
+            SWRLRule swrlRule = new SWRLRule();
+            swrlRule.setAntecedent(antecedent);
+            swrlRule.setConsequent(consequent);
+            swrlRule.setMetadata(rule.getMetadata());
+            return swrlRule;
+        } catch (Exception e) {
+            throw new SWRLConverterError(rule, e);
+        }
     }
 
     private List<Atom> collectAntecedent(List<Predicate> inputAntecedent, Unknowns unknowns) {
@@ -51,8 +55,8 @@ public class SWRLConverter {
         Individual individual = new Individual(predicates.getClassifier().asString());
         Unknown unknown = unknowns.nextUnknown();
 
-        atoms.add(new ClassAtom(configuration.sensorClass(), individual));
-        atoms.add(new PropertyAtom(configuration.sensorValueProperty(), individual, unknown));
+        atoms.add(new ClassAtom(configuration.sensorClass(predicates.getFirstPredicate()), individual));
+        atoms.add(new PropertyAtom(configuration.sensorValueProperty(predicates.getFirstPredicate()), individual, unknown));
         for (Predicate predicate : predicates.getPredicates()) {
             Value value = new Value(predicate.getRightOperand().asString());
             atoms.add(new PropertyAtom(builtIn(predicate.getOperator()), unknown, value));
@@ -75,7 +79,7 @@ public class SWRLConverter {
         Individual individual = new Individual(predicate.getLeftOperand().asString());
         Value value = new Value(predicate.getRightOperand().asString());
 
-        result.add(new PropertyAtom(configuration.sensorValueProperty(), individual, value));
+        result.add(new PropertyAtom(configuration.sensorValueProperty(predicate), individual, value));
 
         return result;
     }
@@ -83,13 +87,22 @@ public class SWRLConverter {
     private List<Atom> convertSensorValuePredicate(Predicate predicate, Unknowns unknowns) {
         List<Atom> result = new LinkedList<Atom>();
 
-        Individual individual = new Individual(predicate.getLeftOperand().asString());
+        String individualName = predicate.getLeftOperand().asString();
+
+        Individual individual = new Individual(individualName);
         Value value = new Value(predicate.getRightOperand().asString());
         Unknown unknown = unknowns.nextUnknown();
 
-        result.add(new ClassAtom(configuration.sensorClass(), individual));
-        result.add(new PropertyAtom(configuration.sensorValueProperty(), individual, unknown));
-        result.add(new PropertyAtom(builtIn(predicate.getOperator()), unknown, value));
+        String className = configuration.sensorClass(predicate);
+
+        if (className == null) {
+            throw new IllegalArgumentException("Individual type not found: " + individualName);
+        }
+
+        result.add(new ClassAtom(className, individual));
+        result.add(new PropertyAtom(configuration.sensorValueProperty(predicate), individual, unknown));
+        result.add(new SWRLBuiltIn(builtIn(predicate.getOperator()), unknown, value));
+
         return result;
     }
 

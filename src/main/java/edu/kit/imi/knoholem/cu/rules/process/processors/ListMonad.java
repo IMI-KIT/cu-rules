@@ -66,6 +66,13 @@ class ListMonad<T> implements Monad<T>{
     }
 
     @Override
+    public void each(Function<T, ?> function) {
+        for (T element : elements) {
+            function.apply(element);
+        }
+    }
+
+    @Override
     public Monad<T> take() {
         return take(1);
     }

@@ -7,4 +7,8 @@ public class ClassAtom extends Atom {
         variables.add(variable);
     }
 
+    public Variable getOperand() {
+        return variables.get(0);
+    }
+
 }
