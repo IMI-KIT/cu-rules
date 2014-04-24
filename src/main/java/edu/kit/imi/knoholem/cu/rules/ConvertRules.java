@@ -83,7 +83,6 @@ public class ConvertRules {
      */
     static class MultipleRuleFileParser {
 
-        private final Collect collect;
         private final List<String> ruleFiles;
         private final RuleParserConfiguration configuration;
         private final int rulesCap;
@@ -100,7 +99,7 @@ public class ConvertRules {
         MultipleRuleFileParser(int rulesCap, int errorsCap, RuleParserConfiguration configuration, List<String> ruleFiles) {
             this.rulesCap = rulesCap;
             this.errorsCap = errorsCap;
-            this.collect = new Collect(rulesCap, errorsCap);
+
             this.configuration = configuration;
             this.ruleFiles = ruleFiles;
         }
