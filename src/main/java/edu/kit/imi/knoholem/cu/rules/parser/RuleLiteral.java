@@ -9,7 +9,7 @@ import java.util.List;
  * A rule literal with instructions for parsing. Instances allow the querying of the rule atoms.
  *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
- * @see edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule
+ * @see edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule
  * @see edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration
  */
 class RuleLiteral {

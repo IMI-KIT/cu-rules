@@ -1,8 +1,8 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
-import edu.kit.imi.knoholem.cu.rules.logicalentities.*;
-import edu.kit.imi.knoholem.cu.rules.process.processors.Function;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.functions.Function;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.swrlentities.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.SWRLBuiltInsVocabulary;
 

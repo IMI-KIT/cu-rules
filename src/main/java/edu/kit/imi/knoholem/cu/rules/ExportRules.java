@@ -1,13 +1,18 @@
 package edu.kit.imi.knoholem.cu.rules;
 
-import edu.kit.imi.knoholem.cu.rules.ontology.*;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
+import edu.kit.imi.knoholem.cu.rules.functions.Collect;
+import edu.kit.imi.knoholem.cu.rules.functions.Monad;
+import edu.kit.imi.knoholem.cu.rules.ontology.OWLBinding;
+import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
+import edu.kit.imi.knoholem.cu.rules.ontology.RuleAnnotator;
+import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.ClassifiedEntities;
+import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.KnownEntities;
+import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.RuleExporter;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
-import edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule;
-import edu.kit.imi.knoholem.cu.rules.process.RuleFileParser;
-import edu.kit.imi.knoholem.cu.rules.process.processors.Collect;
-import edu.kit.imi.knoholem.cu.rules.process.processors.Monad;
-import edu.kit.imi.knoholem.cu.rulesconversion.OntologySWRLConverterConfiguration;
-import edu.kit.imi.knoholem.cu.rulesconversion.RuleConverter;
+import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.RuleConverter;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.SWRLRule;

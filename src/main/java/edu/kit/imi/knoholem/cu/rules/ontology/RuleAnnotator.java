@@ -1,7 +1,7 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
-import edu.kit.imi.knoholem.cu.rules.process.processors.Function;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.functions.Function;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 

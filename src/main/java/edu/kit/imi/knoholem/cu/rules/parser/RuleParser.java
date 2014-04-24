@@ -1,5 +1,9 @@
 package edu.kit.imi.knoholem.cu.rules.parser;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
+import edu.kit.imi.knoholem.cu.rules.atoms.RuleMetadata;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
+
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;

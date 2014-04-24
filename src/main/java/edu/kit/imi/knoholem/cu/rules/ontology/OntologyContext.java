@@ -144,11 +144,23 @@ public class OntologyContext {
      *
      * @param file
      * @throws OWLOntologyStorageException
-     * @throws FileNotFoundException if the given file is a directory, and not a file.
+     * @throws FileNotFoundException       if the given file is a directory, and not a file.
      */
     public void saveOntologyAs(File file) throws OWLOntologyStorageException, FileNotFoundException {
+        saveOntologyAs(file, manager.getOntologyFormat(ontology));
+    }
+
+    /**
+     * Saves the ontology into another file.
+     *
+     * @param file   output file path.
+     * @param format the ontology format to use.
+     * @throws OWLOntologyStorageException
+     * @throws FileNotFoundException       if the given file is a directory, and not a file.
+     */
+    public void saveOntologyAs(File file, OWLOntologyFormat format) throws OWLOntologyStorageException, FileNotFoundException {
         FileOutputStream outputStream = new FileOutputStream(file);
-        manager.saveOntology(ontology, manager.getOntologyFormat(ontology), outputStream);
+        manager.saveOntology(ontology, format, outputStream);
     }
 
     /**

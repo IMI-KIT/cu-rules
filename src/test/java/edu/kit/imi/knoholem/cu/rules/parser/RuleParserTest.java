@@ -1,5 +1,7 @@
 package edu.kit.imi.knoholem.cu.rules.parser;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import org.junit.Test;
 
 import java.util.Calendar;

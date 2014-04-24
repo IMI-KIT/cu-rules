@@ -1,14 +1,14 @@
 package edu.kit.imi.knoholem.cu.rules;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParseError;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
-import edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule;
-import edu.kit.imi.knoholem.cu.rules.process.RuleFileParser;
-import edu.kit.imi.knoholem.cu.rules.process.RuleProcessor;
-import edu.kit.imi.knoholem.cu.rules.process.RuleProcessorResponse;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverter;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverterConfiguration;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
+import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessor;
+import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessorResponse;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverter;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 
 import java.io.File;
 import java.io.IOException;
