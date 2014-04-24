@@ -21,7 +21,7 @@ public class OntologyContextTest {
     public void setUp() throws OWLOntologyCreationException, URISyntaxException {
         URL resourceURL = getClass().getResource("/ontology.n3");
         Path resourcePath = Paths.get(resourceURL.toURI());
-        this.context = new OntologyContext(resourcePath.toFile());
+        this.context = OntologyContext.load(resourcePath.toFile());
     }
 
     @Test

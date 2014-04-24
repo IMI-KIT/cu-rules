@@ -1,9 +1,7 @@
-package edu.kit.imi.knoholem.cu.rules.process.processors;
+package edu.kit.imi.knoholem.cu.rulesconversion;
 
 import edu.kit.imi.knoholem.cu.rules.parser.SensitivityAnalysisRule;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverter;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLConverterConfiguration;
-import edu.kit.imi.knoholem.cu.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.process.processors.Function;
 
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>

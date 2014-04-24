@@ -18,7 +18,7 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
     public String sensorClass(Predicate predicate) {
         String individualName = predicate.getLeftOperand().asString();
 
-        if (!ontology.containsIndividual(individualName)) {
+        if (ontology.containsIndividual(individualName)) {
             return ontology.getRepresentativeClass(individualName);
         } else {
             return null;
@@ -27,7 +27,13 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
 
     @Override
     public String sensorValueProperty(Predicate predicate) {
-        if (sensorClass(predicate).equals("OccupancySensor") || sensorClass(predicate).equals("OpeningSensor")) {
+        String sensorClass = sensorClass(predicate);
+
+        if (sensorClass == null) {
+            throw new IllegalArgumentException("Class membership of individual undefined: " + predicate.getLeftOperand().asString());
+        }
+
+        if (sensorClass.equals("OccupancySensor") || sensorClass.equals("OpeningSensor")) {
             return "hasBinaryValue";
         } else {
             return "hasAnalogValue";

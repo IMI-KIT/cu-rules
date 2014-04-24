@@ -92,4 +92,9 @@ class ListMonad<T> implements Monad<T>{
         return elements.size();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
 }

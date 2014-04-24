@@ -30,7 +30,7 @@ public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.mod
     }
 
     private Set<SWRLAtom> collectAtoms(Collection<? extends Atom> inputAtoms) {
-        Set<SWRLAtom> atoms = new HashSet<SWRLAtom>();
+        Set<SWRLAtom> atoms = new LinkedHashSet<SWRLAtom>();
         for (Atom inputAtom : inputAtoms) {
             atoms.add(convertAtom(inputAtom));
         }
@@ -52,32 +52,38 @@ public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.mod
     private SWRLAtom convertBuiltInAtom(SWRLBuiltIn builtIn) {
         List<SWRLDArgument> arguments = Arrays.asList(
                 getVariableArgument((Unknown) builtIn.getLeftOperand()),
-                getAnalogSWRLDArgument((Value) builtIn.getRightOperand()));
+                getDoubleSWRLDargument((Value) builtIn.getRightOperand()));
         return context.getFactory().getSWRLBuiltInAtom(getBuiltInIRI(builtIn.getAtomName()), arguments);
     }
 
     private SWRLAtom convertClassAtom(ClassAtom atom) {
         SWRLIArgument argument = getSWRLIArgument(atom.getOperand());
-        OWLClass owlClass = context.getFactory().getOWLClass(context.iri(atom.getAtomName()));
+        OWLClass owlClass = context.getOWLClass(atom.getAtomName());
         return context.getFactory().getSWRLClassAtom(owlClass, argument);
     }
 
     private SWRLAtom convertPropertyAtom(PropertyAtom propertyAtom) {
-        OWLDataProperty owlDataProperty = context.getFactory().getOWLDataProperty(context.iri(propertyAtom.getAtomName()));
+        OWLDataProperty owlDataProperty = context.getDataProperty(propertyAtom.getAtomName());
         SWRLIArgument individualArgument = getSWRLIArgument(propertyAtom.getLeftOperand());
         SWRLDArgument dataArgument = getSWRLDArgument(propertyAtom);
         return context.getFactory().getSWRLDataPropertyAtom(owlDataProperty, individualArgument, dataArgument);
     }
 
     private SWRLDArgument getSWRLDArgument(PropertyAtom propertyAtom) {
+        Variable value = propertyAtom.getRightOperand();
+
+        if (value instanceof Unknown) {
+            return getVariableArgument((Unknown) value);
+        }
+
         if (propertyAtom.getAtomName().equals("hasBinaryValue")) {
-            return getBinarySWRLDArgument((Value) propertyAtom.getRightOperand());
+            return getBinarySWRLDArgument((Value) value);
         } else {
-            return getAnalogSWRLDArgument((Value) propertyAtom.getRightOperand());
+            return getDoubleSWRLDargument((Value) value);
         }
     }
 
-    private SWRLDArgument getAnalogSWRLDArgument(Value variable) {
+    private SWRLDArgument getDoubleSWRLDargument(Value variable) {
         String value = variable.getValue();
         OWLLiteral literal = context.getFactory().getOWLLiteral(Double.parseDouble(value));
         return context.getFactory().getSWRLLiteralArgument(literal);
@@ -103,8 +109,7 @@ public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.mod
     }
 
     private SWRLIndividualArgument getNamedIndividualArgument(Individual individual) {
-        IRI individualIRI = context.iri(individual.getIndividualName());
-        OWLNamedIndividual owlIndividual = context.getFactory().getOWLNamedIndividual(individualIRI);
+        OWLNamedIndividual owlIndividual = context.getIndividual(individual.getIndividualName());
         return context.getFactory().getSWRLIndividualArgument(owlIndividual);
     }
 

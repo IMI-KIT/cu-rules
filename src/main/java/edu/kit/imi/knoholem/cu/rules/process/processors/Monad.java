@@ -16,6 +16,7 @@ public interface Monad<T> {
     public Collection<? extends T> getElements();
     public boolean isSingular();
     public boolean any();
+    public boolean isEmpty();
     public int size();
 
 }
