@@ -1,6 +1,8 @@
 package edu.kit.imi.knoholem.cu.rules;
 
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
+import edu.kit.imi.knoholem.cu.rules.functions.Collect;
+import edu.kit.imi.knoholem.cu.rules.functions.Monad;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParseError;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
@@ -11,11 +13,10 @@ import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Main library class.
@@ -37,11 +38,10 @@ public class ConvertRules {
             System.exit(1);
         }
 
-        File file = new File(args[0]);
-        RuleFileParser fileParser = new RuleFileParser(file, RuleParserConfiguration.getDefaultConfiguration());
-        ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100, System.out);
+        Minigun minigun = new Minigun(Arrays.asList(args));
 
-        fileParser.process(processor);
+        ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100, System.out);
+        minigun.process(RuleParserConfiguration.getDefaultConfiguration(), processor);
 
         System.err.printf("\n---\nRules converted: %d\nErrors encountered: %d\n", processor.getRuleCount(), processor.getFailCount());
 
@@ -49,6 +49,68 @@ public class ConvertRules {
         for (RuleParseError error : processor.getErrors()) {
             System.err.println(error.getMessage() + " (" + error.getRuleLiteral() + ")");
         }
+    }
+
+    /**
+     * A utility for processing rule files passed from the command line.
+     */
+    static class Minigun {
+
+        private final List<File> ruleFiles;
+
+        Minigun(List<String> filePaths) {
+            this.ruleFiles = new ArrayList<File>(filePaths.size());
+            for (String path : filePaths) {
+                ruleFiles.add(new File(path));
+            }
+        }
+
+        public void process(RuleParserConfiguration configuration, RuleProcessor processor) throws IOException {
+            for (File file : ruleFiles) {
+                System.err.println("Parsing rules in " + file.getName());
+                RuleFileParser parser = new RuleFileParser(file, configuration);
+                try {
+                    parser.process(processor);
+                } catch (FileNotFoundException e) {
+                    System.err.println("File " + file.getName() + " not found!");
+                }
+            }
+        }
+    }
+
+    /**
+     * A utility for gathering the rules distributed in multiple files.
+     */
+    static class MultipleRuleFileParser {
+
+        private final Collect collect;
+        private final List<String> ruleFiles;
+        private final RuleParserConfiguration configuration;
+        private final int rulesCap;
+        private final int errorsCap;
+
+        MultipleRuleFileParser(List<String> ruleFiles) {
+            this(-1, -1, RuleParserConfiguration.getDefaultConfiguration(), ruleFiles);
+        }
+
+        MultipleRuleFileParser(RuleParserConfiguration configuration, List<String> ruleFiles) {
+            this(-1, -1, configuration, ruleFiles);
+        }
+
+        MultipleRuleFileParser(int rulesCap, int errorsCap, RuleParserConfiguration configuration, List<String> ruleFiles) {
+            this.rulesCap = rulesCap;
+            this.errorsCap = errorsCap;
+            this.collect = new Collect(rulesCap, errorsCap);
+            this.configuration = configuration;
+            this.ruleFiles = ruleFiles;
+        }
+
+        public Monad<SensitivityAnalysisRule> getRules() throws IOException {
+            Collect processor = new Collect(rulesCap, errorsCap);
+            new Minigun(ruleFiles).process(configuration, processor);
+            return processor.getRules();
+        }
+
     }
 
     /**
