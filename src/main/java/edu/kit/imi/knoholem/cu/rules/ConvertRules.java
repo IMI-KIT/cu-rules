@@ -12,6 +12,7 @@ import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 public class ConvertRules {
 
     /**
-     * Reads a file containing sensitivity analysis rules, converts them, and prints
+     * Reads a file containing sensitivity analysis rules, converts them using the default configuration, and prints
      * each converted SWRL rule on a new line.
      *
      * @param args a path to a text file containing the rules.
@@ -32,13 +33,13 @@ public class ConvertRules {
      */
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
-            System.out.println("Please, provide a path to the sensitivity analysis rules.");
+            System.err.println("Please, provide a path to the sensitivity analysis rules.");
             System.exit(1);
         }
 
         File file = new File(args[0]);
         RuleFileParser fileParser = new RuleFileParser(file, RuleParserConfiguration.getDefaultConfiguration());
-        ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100);
+        ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100, System.out);
 
         fileParser.process(processor);
 
@@ -59,6 +60,7 @@ public class ConvertRules {
         private int ruleCount;
         private int failCount;
 
+        private final PrintStream stream;
         private final int failCapacity;
         private final LinkedList<RuleParseError> failList;
         private final SWRLConverter converter;
@@ -69,10 +71,11 @@ public class ConvertRules {
          * @param converterConfiguration the SWRL converter configuration to use.
          * @param failCapacity maximal numbers of errors to buffer.
          */
-        ConvertPrint(SWRLConverterConfiguration converterConfiguration, int failCapacity) {
+        ConvertPrint(SWRLConverterConfiguration converterConfiguration, int failCapacity, PrintStream stream) {
             this.ruleCount = 0;
             this.failCount = 0;
 
+            this.stream = stream;
             this.converter = new SWRLConverter(converterConfiguration);
             this.failCapacity = failCapacity;
             this.failList = new LinkedList<RuleParseError>();
@@ -81,7 +84,7 @@ public class ConvertRules {
         @Override
         public RuleProcessorResponse onParse(SensitivityAnalysisRule rule) {
             SWRLRule swrlRule = converter.convertRule(rule);
-            System.out.println(swrlRule.getExpression());
+            stream.println(swrlRule.getExpression());
             ruleCount++;
             return new Response(swrlRule);
         }

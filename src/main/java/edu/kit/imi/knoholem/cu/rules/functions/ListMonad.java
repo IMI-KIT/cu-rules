@@ -1,9 +1,6 @@
 package edu.kit.imi.knoholem.cu.rules.functions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A list monad implementation.
@@ -32,6 +29,15 @@ class ListMonad<T> implements Monad<T>{
         List<O> result = new LinkedList<O>();
         for (T element : elements) {
             result.add(function.apply(element));
+        }
+        return new ListMonad<O>(result);
+    }
+
+    @Override
+    public <O> Monad<O> flatMap(Function<T, Monad<O>> function) {
+        List<O> result = new LinkedList<O>();
+        for (T element : elements) {
+            result.addAll(function.apply(element).getElements());
         }
         return new ListMonad<O>(result);
     }
@@ -77,6 +83,16 @@ class ListMonad<T> implements Monad<T>{
     @Override
     public Monad<T> take() {
         return take(1);
+    }
+
+    @Override
+    public Monad<T> unique() {
+        Set<T> set = new LinkedHashSet<T>(elements.size());
+        set.addAll(elements);
+
+        List<T> result = new ArrayList<T>(set.size());
+        result.addAll(set);
+        return new ListMonad<T>(result);
     }
 
     @Override

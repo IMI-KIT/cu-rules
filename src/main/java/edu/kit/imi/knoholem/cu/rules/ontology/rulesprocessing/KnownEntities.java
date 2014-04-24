@@ -23,7 +23,7 @@ public class KnownEntities implements Function<SensitivityAnalysisRule, Boolean>
      * Answers if every predicate object in the rule is contained in the given ontology.
      *
      * @param input function input
-     * @return <code>true</code>, if all individuals referenced in the rule could be found in the signature of theontology, <code>false</code> otherwise.
+     * @return <code>true</code>, if all individuals referenced in the rule could be found in the signature of the ontology, <code>false</code> otherwise.
      */
     @Override
     public Boolean apply(SensitivityAnalysisRule input) {
