@@ -23,17 +23,21 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * <p>
  * Converts a set of sensitivity analysis rules to SWRL rules and saves them in an ontology.
+ * </p>
+ *
  * <p>
  * CLI usage:
  * <code>
- *     java -cp &lt;path_to_jar&gt; ExportRules &lt;ontology_file&gt; &lt;export_file&gt; &lt;rule_file&gt;...
+ * java -cp &lt;path_to_jar&gt; ExportRules &lt;ontology_file&gt; &lt;export_file&gt; &lt;rule_file&gt;...
  * </code>
  * </p>
  *
  * <p>
- *     The API provides convenience methods for converting a list of sensitivity analysis rules to SWRL rules.
+ * The API provides convenience methods for converting a list of sensitivity analysis rules to SWRL rules.
  * </p>
+ *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class ExportRules {
@@ -41,15 +45,33 @@ public class ExportRules {
     private final OntologyContext ontology;
     private final Monad<SensitivityAnalysisRule> rules;
 
+    /**
+     * Default constructor.
+     *
+     * @param ontology ontology document used when transforming the rules (resolves class membership and property relations).
+     * @param rules    the rules to transform.
+     */
     public ExportRules(OntologyContext ontology, Monad<SensitivityAnalysisRule> rules) {
         this.ontology = ontology;
         this.rules = rules;
     }
 
+    /**
+     * Default constructor.
+     *
+     * @param ontology ontology document used when transforming the rules (resolves class membership and property relations).
+     * @param rules    the rules to transform.
+     */
     public ExportRules(OntologyContext ontology, Collection<? extends SensitivityAnalysisRule> rules) {
         this.ontology = ontology;
         this.rules = Monads.list(rules);
     }
+
+    /**
+     * Returns a subset of the rules which are covered by the ontology.
+     *
+     * @return a sublist of the rules with the unknown and unclassified individuals subtracted.
+     */
     public Monad<SensitivityAnalysisRule> getSensitivityAnalysisRules() {
         KnownEntities knownEntities = new KnownEntities(ontology);
         ClassifiedEntities classifiedEntities = new ClassifiedEntities(ontology);
@@ -57,6 +79,11 @@ public class ExportRules {
         return rules.select(knownEntities).select(classifiedEntities);
     }
 
+    /**
+     * Returns a collection of SWRL rules.
+     *
+     * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL rules.
+     */
     public Monad<SWRLRule> getSWRLRules() {
         RuleConverter converter = new RuleConverter(new OntologySWRLConverterConfiguration(ontology));
         RuleAnnotator annotator = new RuleAnnotator(ontology);
@@ -65,7 +92,20 @@ public class ExportRules {
         return getSensitivityAnalysisRules().map(converter).map(owlBinding);
     }
 
+    /**
+     * Main method.
+     *
+     * @param args a path to the reference ontology as a first argument, a pathname to
+     *             export the rules to as a second argument and the input rule files as subsequent varargs.
+     * @throws OWLOntologyCreationException
+     * @throws IOException                  indicates an error when reading from a the rules files.
+     * @throws OWLOntologyStorageException  indicates an error when writing the rules.
+     */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
+        if (args.length < 3) {
+            System.err.println("Please, provide at least 3 arguments.");
+        }
+
         // Arguments
         File ontologyFile = new File(args[0]);
         File exportFile = new File(args[1]);
