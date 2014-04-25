@@ -2,7 +2,6 @@ package edu.kit.imi.knoholem.cu.rules;
 
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Collect;
-import edu.kit.imi.knoholem.cu.rules.functions.Monad;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParseError;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
@@ -19,7 +18,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 /**
- * Main library class.
+ * Main library class. Useful for sampling the rules which the library produces.
  *
  * @see edu.kit.imi.knoholem.cu.rules.ConvertRules::main(String[])
  */
@@ -34,7 +33,7 @@ public class ConvertRules {
      */
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
-            System.err.println("Please, provide a path to the sensitivity analysis rules.");
+            System.err.println("Please, provide at least one path to the sensitivity analysis rules.");
             System.exit(1);
         }
 
@@ -43,7 +42,8 @@ public class ConvertRules {
         ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100, System.out);
         minigun.process(RuleParserConfiguration.getDefaultConfiguration(), processor);
 
-        System.err.printf("\n---\nRules converted: %d\nErrors encountered: %d\n", processor.getRuleCount(), processor.getFailCount());
+        System.err.printf("\n---\nRules converted: %d\nErrors encountered: %d\n",
+                processor.getRuleCount(), processor.getFailCount());
 
         System.err.printf("\nLast %d errors:\n", processor.getFailCapacity());
         for (RuleParseError error : processor.getErrors()) {
@@ -65,6 +65,13 @@ public class ConvertRules {
             }
         }
 
+        /**
+         * Processes each given file sequentially, logging the activity on the standard out.
+         *
+         * @param configuration the rule parser configuration to use.
+         * @param processor     the processor to be invoked on each file.
+         * @throws IOException in case of a read failure.
+         */
         public void process(RuleParserConfiguration configuration, RuleProcessor processor) throws IOException {
             for (File file : ruleFiles) {
                 System.err.println("Parsing rules in " + file.getName());
@@ -79,7 +86,8 @@ public class ConvertRules {
     }
 
     /**
-     * A utility for gathering the rules distributed in multiple files.
+     * A utility for gathering the rules distributed in multiple files. This works with
+     * {@link edu.kit.imi.knoholem.cu.rules.ConvertRules.Minigun}, so it pollutes the standard error.
      */
     static class MultipleRuleFileParser {
 
@@ -88,14 +96,33 @@ public class ConvertRules {
         private final int rulesCap;
         private final int errorsCap;
 
+        /**
+         * Default constructor. Collects all encountered rules using the default rule parser configuration.
+         *
+         * @param ruleFiles paths to the files to parse.
+         */
         MultipleRuleFileParser(List<String> ruleFiles) {
             this(-1, -1, RuleParserConfiguration.getDefaultConfiguration(), ruleFiles);
         }
 
+        /**
+         * Instantiates a parser that collects all encountered rules using a given a rule parser configuration.
+         *
+         * @param configuration rule parser configuration.
+         * @param ruleFiles     paths to the files to parse.
+         */
         MultipleRuleFileParser(RuleParserConfiguration configuration, List<String> ruleFiles) {
             this(-1, -1, configuration, ruleFiles);
         }
 
+        /**
+         * Instantiates a parser that collects a limited number of encountered rules with a parser configuration.
+         *
+         * @param rulesCap      the maximum number of rules to collect. A negative number collects all encountered rules.
+         * @param errorsCap     the maximum number of errors to buffer. A negative number collects all encountered errors.
+         * @param configuration rule parser configuration.
+         * @param ruleFiles     paths to the files to parse.
+         */
         MultipleRuleFileParser(int rulesCap, int errorsCap, RuleParserConfiguration configuration, List<String> ruleFiles) {
             this.rulesCap = rulesCap;
             this.errorsCap = errorsCap;
@@ -104,16 +131,22 @@ public class ConvertRules {
             this.ruleFiles = ruleFiles;
         }
 
-        public Monad<SensitivityAnalysisRule> getRules() throws IOException {
+        /**
+         * Processes the given files and returns a {@link edu.kit.imi.knoholem.cu.rules.functions.Collect} instance with the gathered rules.
+         *
+         * @return a collector instance.
+         * @throws IOException in case of a failure when reading a given file.
+         */
+        public Collect execute() throws IOException {
             Collect processor = new Collect(rulesCap, errorsCap);
             new Minigun(ruleFiles).process(configuration, processor);
-            return processor.getRules();
+            return processor;
         }
 
     }
 
     /**
-     * A rule processor that converts each parsed rule and prints it on the standard out. It also collects encountered
+     * A rule processor that converts each parsed rule and prints it out on a stream. It also collects encountered
      * errors for later reference.
      */
     static class ConvertPrint implements RuleProcessor {
@@ -130,7 +163,7 @@ public class ConvertRules {
          * Default constructor.
          *
          * @param converterConfiguration the SWRL converter configuration to use.
-         * @param failCapacity maximal numbers of errors to buffer.
+         * @param failCapacity           maximal numbers of errors to buffer.
          */
         ConvertPrint(SWRLConverterConfiguration converterConfiguration, int failCapacity, PrintStream stream) {
             this.ruleCount = 0;
@@ -157,7 +190,7 @@ public class ConvertRules {
             }
             failList.push(error);
             failCount++;
-            return new Response(null);
+            return RuleProcessorResponse.OK;
         }
 
         /**

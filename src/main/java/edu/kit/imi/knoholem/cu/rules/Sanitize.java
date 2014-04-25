@@ -17,12 +17,17 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Prints the individuals referenced in a set of rules that are not found in the signature of a given ontology or that don't have defined classes.
- * <p/>
+ * Prints the individuals referenced in a set of rules that are not found in the signature of a given ontology or that
+ * don't have defined classes.
+ *
  * <p>
- * Usage: java -cp edu.kit.imi.knoholem.cu.rules.jar Sanitize <ontology_file> <rule_file>...
+ * CLI usage:
+ * <code>
+ *     java -cp &lt;path_to_jar&gt; Sanitize &lt;ontology_file&gt; &lt;rule_file&gt;...
+ * </code>
  * </p>
  *
+ * <p>The API exposes the said offenders through monads.</p>
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class Sanitize {
@@ -75,7 +80,7 @@ public class Sanitize {
         OntologyContext ontology = OntologyContext.load(ontologyFile);
 
         ConvertRules.MultipleRuleFileParser parser = new ConvertRules.MultipleRuleFileParser(files);
-        Monad<SensitivityAnalysisRule> collectedRules = parser.getRules();
+        Monad<SensitivityAnalysisRule> collectedRules = parser.execute().getRules();
         Sanitize sanitize = new Sanitize(ontology, collectedRules);
 
         System.err.println("Collected " + collectedRules.size() + " sensitivity analysis rules.");
