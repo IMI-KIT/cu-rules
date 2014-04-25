@@ -1,12 +1,12 @@
 # CU-RULES[1]
 
 A library for processing sensitivity analysis rules produced by Cardiff
-University within the project KnoholEM[2].
+University within the project KnoHolEM[2].
 
 # Installation
 
 The library builds with maven. Ensure that you have a maven installation,
-issuing for example:
+e.g issuing:
 
   mvn -v
 
@@ -38,7 +38,7 @@ A `SensitivityAnalysisRule` can be converted to an SWRL rule via the
 `SWRLConverter` interface. Similarly to the `RuleParser` it needs a
 configuration instance:
 
-  SWRLConverter converter = new SWRLConverter(new DefaultSWRLConverterConfiguration());
+  SWRLConverter converter = new SWRLConverter(SWRLConverterConfiguration.getDefaultConfiguration());
   SWRLRule swrlRule = converter.convertRule(rule);
 
 Currently, the library does not support the manipulation of the rules' atoms.
@@ -49,7 +49,7 @@ For this and further issues, refer to the TODO document.
 The jar package has a main entry point which allows you to convert the
 sensitivity analysis rules and print the results on the standard output.
 
-  java -jar target/cu-rules-0.0.1-SNAPSHOT.jar /path/to/rules
+  java -jar target/cu-rules-0.0.1-SNAPSHOT.jar /path/to/rules...
 
 [1]: It does!
 [2]: http://knoholem.eu "KnoholEM"

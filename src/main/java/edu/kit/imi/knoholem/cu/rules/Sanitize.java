@@ -23,11 +23,12 @@ import java.util.List;
  * <p>
  * CLI usage:
  * <code>
- *     java -cp &lt;path_to_jar&gt; Sanitize &lt;ontology_file&gt; &lt;rule_file&gt;...
+ * java -cp &lt;path_to_jar&gt; Sanitize &lt;ontology_file&gt; &lt;rule_file&gt;...
  * </code>
  * </p>
  *
  * <p>The API exposes the said offenders through monads.</p>
+ *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class Sanitize {
@@ -35,28 +36,52 @@ public class Sanitize {
     private final OntologyContext ontologyContext;
     private final Monad<SensitivityAnalysisRule> rules;
 
-    private boolean processed;
-
+    /**
+     * Default constructor.
+     *
+     * @param ontologyContext the ontology to consult.
+     * @param rules a set of rules to process.
+     */
     public Sanitize(OntologyContext ontologyContext, Collection<? extends SensitivityAnalysisRule> rules) {
         this.ontologyContext = ontologyContext;
         this.rules = Monads.list(rules);
     }
 
+    /**
+     * Default constructor.
+     *
+     * @param ontologyContext the ontology to consult.
+     * @param rules a set of rules to process.
+     */
     public Sanitize(OntologyContext ontologyContext, Monad<SensitivityAnalysisRule> rules) {
         this.ontologyContext = ontologyContext;
         this.rules = rules;
     }
 
+    /**
+     * Extracts all subjects from the given rules.
+     *
+     * @return every left side in the predicates of the rules contained.
+     */
     public Monad<Literal> getSubjects() {
         return rules.flatMap(new RuleSubjects());
     }
 
+    /**
+     * Returns the individuals not contained in the rules.
+     *
+     * @return a list of literals representing individuals not contained in the ontology.
+     */
     public Monad<Literal> getUnknownEntities() {
         KnownEntity knownEntities = new KnownEntity(ontologyContext);
         return getSubjects().reject(knownEntities).unique();
-
     }
 
+    /**
+     * Returns the individuals that don't have a class declarations in the ontology.
+     *
+     * @return a subset of the {@link #getSubjects()} output with literals representing individuals not classified in the given ontology.
+     */
     public Monad<Literal> getUnclassifiedEntities() {
         KnownEntity knownEntities = new KnownEntity(ontologyContext);
         ClassifiedEntity classifiedEntities = new ClassifiedEntity(ontologyContext);
@@ -72,6 +97,10 @@ public class Sanitize {
      * @throws IOException                  in case of IO error when reading the rule files.
      */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException {
+        if (args.length < 2) {
+            System.err.println("Please, provide at least two arguments.");
+        }
+
         // Arguments
         File ontologyFile = new File(args[0]);
         List<String> files = Arrays.asList(args).subList(1, args.length);
@@ -79,6 +108,7 @@ public class Sanitize {
         // Initialization
         OntologyContext ontology = OntologyContext.load(ontologyFile);
 
+        // Processing
         ConvertRules.MultipleRuleFileParser parser = new ConvertRules.MultipleRuleFileParser(files);
         Monad<SensitivityAnalysisRule> collectedRules = parser.execute().getRules();
         Sanitize sanitize = new Sanitize(ontology, collectedRules);
@@ -94,7 +124,6 @@ public class Sanitize {
         for (Literal literal : sanitize.getUnclassifiedEntities().getElements()) {
             System.out.printf("\t%s\n", literal.asString());
         }
-
     }
 
 }
