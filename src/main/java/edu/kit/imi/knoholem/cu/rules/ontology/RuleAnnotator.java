@@ -48,7 +48,7 @@ public class RuleAnnotator implements Function<SWRLRule, Set<OWLAnnotation>> {
     private Set<OWLAnnotation> ruleIDAnnotation(int ruleId) {
         OWLAnnotation idLabel = ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
-                ontology.getFactory().getOWLLiteral(ruleId));
+                ontology.getFactory().getOWLLiteral("#RULEID" + ruleId));
         return Collections.singleton(idLabel);
     }
 
