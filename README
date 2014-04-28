@@ -41,15 +41,27 @@ configuration instance:
   SWRLConverter converter = new SWRLConverter(SWRLConverterConfiguration.getDefaultConfiguration());
   SWRLRule swrlRule = converter.convertRule(rule);
 
-Currently, the library does not support the manipulation of the rules' atoms.
-For this and further issues, refer to the TODO document.
+Before converting to the SWRL representation, you should make sure that all
+referenced entities could be found in the target ontology. Otherwise the
+entities would be written in the ontology without producing any error while
+breaking the consistency of the ABox.
+
+The `ontology` package provides an interface to a reference ontology which
+implements the OWL API. Use the implementations there to perform the
+necessary filtering of the rule atoms with the KnoHolEM ontology or write your
+own when adopting a different specification.
+
+Once the rules are converted to the SWRL representation, they can be written
+in an ontology via the `ontology.rulesprocessing.RuleExporter` mapper. An
+example implementation could be found in the `ExportRules` class.
 
 # Running
 
 The jar package has a main entry point which allows you to convert the
-sensitivity analysis rules and print the results on the standard output.
+sensitivity analysis rules in a set of files and print the resulting SWRL
+representations on the standard output.
 
-  java -jar target/cu-rules-0.0.1-SNAPSHOT.jar /path/to/rules...
+  java -jar target/cu-rules-0.1.0-SNAPSHOT.jar /path/to/rules...
 
 [1]: It does!
 [2]: http://knoholem.eu "KnoholEM"

@@ -8,6 +8,9 @@ import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
  */
 public class OntologySWRLConverterConfiguration extends SWRLConverterConfiguration {
 
+    public static final String OCCUPANCY_SENSOR_CLASS = "OccupancySensor";
+    public static final String OPENING_SENSOR_CLASS = "OpeningSensor";
+
     private final OntologyContext ontology;
 
     public OntologySWRLConverterConfiguration(OntologyContext ontology) {
@@ -33,7 +36,7 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
             throw new IllegalArgumentException("Class membership of individual undefined: " + predicate.getLeftOperand().asString());
         }
 
-        if (sensorClass.equals("OccupancySensor") || sensorClass.equals("OpeningSensor")) {
+        if (sensorClass.equals(OCCUPANCY_SENSOR_CLASS) || sensorClass.equals(OPENING_SENSOR_CLASS)) {
             return "hasBinaryValue";
         } else {
             return "hasAnalogValue";
