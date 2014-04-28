@@ -26,8 +26,8 @@ public class SWRLConverter {
     public SWRLRule convertRule(SensitivityAnalysisRule rule) {
         try {
             Unknowns unknowns = new Unknowns();
-            List<Atom> antecedent = collectAntecedent(rule.getAntecedent(), unknowns);
-            List<Atom> consequent = collectConsequent(rule.getConsequent(), unknowns);
+            List<Atom> antecedent = collectAtoms(rule.getAntecedent(), unknowns);
+            List<Atom> consequent = collectAtoms(rule.getConsequent(), unknowns);
             SWRLRule swrlRule = new SWRLRule();
             swrlRule.setAntecedent(antecedent);
             swrlRule.setConsequent(consequent);
@@ -38,11 +38,11 @@ public class SWRLConverter {
         }
     }
 
-    private List<Atom> collectAntecedent(List<Predicate> inputAntecedent, Unknowns unknowns) {
+    private List<Atom> collectAtoms(List<Predicate> predicates, Unknowns unknowns) {
         List<Atom> result = new ArrayList<Atom>();
         // classify the predicates
         // convert each predicate and return a list
-        for (PredicateMapEntry entry : new PredicateMap(inputAntecedent).byLeftOperand()) {
+        for (PredicateMapEntry entry : new PredicateMap(predicates).byLeftOperand()) {
             if (entry.isSingular()) {
                 result.addAll(convertSensorValuePredicate(entry.getFirstPredicate(), unknowns));
             } else {
@@ -62,31 +62,19 @@ public class SWRLConverter {
         atoms.add(new PropertyAtom(configuration.sensorValueProperty(predicates.getFirstPredicate()), individual, unknown));
         for (Predicate predicate : predicates.getPredicates()) {
             Value value = new Value(predicate.getRightOperand().asString());
-            atoms.add(new PropertyAtom(builtIn(predicate.getOperator()), unknown, value));
+            atoms.add(new SWRLBuiltIn(builtIn(predicate.getOperator()), unknown, value));
         }
 
         return atoms;
     }
 
-    private List<Atom> collectConsequent(List<Predicate> inputConsequent, Unknowns unknowns) {
-        List<Atom> result = new ArrayList<Atom>();
-        for (Predicate predicate : inputConsequent) {
-            result.addAll(convertConsequentPredicate(predicate, unknowns));
-        }
-        return result;
-    }
-
-    private List<Atom> convertConsequentPredicate(Predicate predicate, Unknowns unknowns) {
-        List<Atom> result = new ArrayList<Atom>();
-
-        Individual individual = new Individual(predicate.getLeftOperand().asString());
-        Value value = new Value(predicate.getRightOperand().asString());
-
-        result.add(new PropertyAtom(configuration.sensorValueProperty(predicate), individual, value));
-
-        return result;
-    }
-
+    /**
+     * TODO: Is this method obsolete?
+     *
+     * @param predicate
+     * @param unknowns
+     * @return
+     */
     private List<Atom> convertSensorValuePredicate(Predicate predicate, Unknowns unknowns) {
         List<Atom> result = new LinkedList<Atom>();
 
