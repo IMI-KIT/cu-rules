@@ -91,7 +91,7 @@ public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.mod
 
     private SWRLDArgument getBinarySWRLDArgument(Value value) {
         String stringValue = value.getValue();
-        OWLLiteral literal = context.getFactory().getOWLLiteral(stringValue.equals("1"));
+        OWLLiteral literal = context.getFactory().getOWLLiteral(stringValue.equals("1.00"));
         return context.getFactory().getSWRLLiteralArgument(literal);
     }
 

@@ -1,7 +1,8 @@
 # TODO
 
-Here's a current list of todo items, more or less ordered by priority.
+Here's a current list of todo items, more or less ordered by priority:
 
- - Make the parser configuration automatically configurable (based on keys). To achieve this, split the configuration in rule syntax and predicate syntax.
- - Introduce typed literals.
- - Documentation.
+ * Rule conversion when exporting should be based off the SensitivityAnalysisRule representation (or else provide richer SWRL entities).
+ * Make the parser configuration automatically configurable (based on keys). To achieve this, split the configuration in rule syntax and predicate syntax.
+ * Introduce typed literals.
+ * Documentation.
