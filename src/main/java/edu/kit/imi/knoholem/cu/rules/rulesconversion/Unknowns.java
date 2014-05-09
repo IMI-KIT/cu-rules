@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class Unknowns {
+public class Unknowns {
 
 	private static final Map<Character,Character> characterMap;
 	static {
@@ -67,7 +67,7 @@ class Unknowns {
 		this.counter = 0;
 	}
 
-	Unknown nextUnknown() {
+	public Unknown nextUnknown() {
 		Unknown unknown = getUnknown(counter);
 		counter = counter + 1;
 		return unknown;

@@ -11,7 +11,6 @@ import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.ClassifiedEntities
 import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.KnownEntities;
 import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.RuleExporter;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
-import edu.kit.imi.knoholem.cu.rules.rulesconversion.RuleConverter;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.SWRLRule;
@@ -85,25 +84,26 @@ public class ExportRules {
      * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL rules.
      */
     public Monad<SWRLRule> getSWRLRules() {
-        RuleConverter converter = new RuleConverter(new OntologySWRLConverterConfiguration(ontology));
+        OntologySWRLConverterConfiguration configuration = new OntologySWRLConverterConfiguration(ontology);
         RuleAnnotator annotator = new RuleAnnotator(ontology);
-        OWLBinding owlBinding = new OWLBinding(ontology, annotator);
+        OWLBinding owlBinding = new OWLBinding(ontology, configuration, annotator);
 
-        return getSensitivityAnalysisRules().map(converter).map(owlBinding);
+        return getSensitivityAnalysisRules().map(owlBinding);
     }
 
     /**
      * Main method.
      *
-     * @param args a path to the reference ontology as a first argument, a pathname to
-     *             export the rules to as a second argument and the input rule files as subsequent varargs.
-     * @throws OWLOntologyCreationException
+     * @param args <code>args[0]</code>: a path to the reference ontology, <code>args[1]</code>: pathname to
+     *             export the rules to, <code>args[1..]</code> the input rule files.
+     * @throws OWLOntologyCreationException indicates an error when parsing the reference ontology.
      * @throws IOException                  indicates an error when reading from a the rules files.
      * @throws OWLOntologyStorageException  indicates an error when writing the rules.
      */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
         if (args.length < 3) {
             System.err.println("Please, provide at least 3 arguments.");
+            System.exit(1);
         }
 
         // Arguments

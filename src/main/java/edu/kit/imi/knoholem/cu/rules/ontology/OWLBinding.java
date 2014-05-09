@@ -1,8 +1,15 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.Operator;
+import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
+import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMap;
+import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMapEntry;
 import edu.kit.imi.knoholem.cu.rules.functions.Function;
-import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
-import edu.kit.imi.knoholem.cu.rules.swrlentities.*;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterError;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.Unknowns;
+import edu.kit.imi.knoholem.cu.rules.swrlentities.Unknown;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.SWRLBuiltInsVocabulary;
 
@@ -11,96 +18,102 @@ import java.util.*;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.model.SWRLRule> {
+public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
 
     private final OntologyContext context;
-    private final Function<SWRLRule, Set<OWLAnnotation>> ruleAnnotations;
+    private final SWRLConverterConfiguration configuration;
+    private final Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations;
 
-    public OWLBinding(OntologyContext context, Function<SWRLRule, Set<OWLAnnotation>> ruleAnnotations) {
+    public OWLBinding(OntologyContext context, SWRLConverterConfiguration configuration,
+                      Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations) {
         this.context = context;
+        this.configuration = configuration;
         this.ruleAnnotations = ruleAnnotations;
     }
 
     @Override
-    public org.semanticweb.owlapi.model.SWRLRule apply(SWRLRule input) {
-        Set<SWRLAtom> antecedentAtoms = collectAtoms(input.getAntecedent());
-        Set<SWRLAtom> consequentAtoms = collectAtoms(input.getConsequent());
-        Set<OWLAnnotation> annotations = ruleAnnotations.apply(input);
-        return context.getFactory().getSWRLRule(antecedentAtoms, consequentAtoms, annotations);
+    public SWRLRule apply(SensitivityAnalysisRule input) {
+        try {
+            Unknowns unknowns = new Unknowns();
+            Set<SWRLAtom> antecedentAtoms = collectAtoms(input.getAntecedent(), unknowns);
+            Set<SWRLAtom> consequentAtoms = collectAtoms(input.getConsequent(), unknowns);
+            Set<OWLAnnotation> annotations = ruleAnnotations.apply(input);
+
+            return context.getFactory().getSWRLRule(antecedentAtoms, consequentAtoms, annotations);
+        } catch (Exception e) {
+            throw new SWRLConverterError(input, e);
+        }
     }
 
-    private Set<SWRLAtom> collectAtoms(Collection<? extends Atom> inputAtoms) {
-        Set<SWRLAtom> atoms = new LinkedHashSet<SWRLAtom>();
-        for (Atom inputAtom : inputAtoms) {
-            atoms.add(convertAtom(inputAtom));
+    private Set<SWRLAtom> collectAtoms(List<Predicate> predicates, Unknowns unknowns) {
+        Set<SWRLAtom> result = new HashSet<SWRLAtom>();
+
+        for (PredicateMapEntry entry : new PredicateMap(predicates).byLeftOperand()) {
+                result.addAll(convertSensorValuePredicates(entry, unknowns));
         }
+
+        return result;
+    }
+
+    private List<SWRLAtom> convertSensorValuePredicates(PredicateMapEntry predicates, Unknowns unknowns) {
+        List<SWRLAtom> atoms = new LinkedList<SWRLAtom>();
+
+        String className = configuration.sensorClass(predicates.getFirstPredicate());
+        String propertyName = configuration.sensorValueProperty(predicates.getFirstPredicate());
+        String individualName = predicates.getClassifier().asString();
+
+        Unknown unknown = unknowns.nextUnknown();
+
+        atoms.add(classAtom(className, individualName));
+        atoms.add(sensorValueProperty(propertyName, individualName, unknown));
+        for (Predicate predicate : predicates.getPredicates()) {
+            atoms.add(swrlBuiltIn(predicate, unknown));
+        }
+
         return atoms;
     }
 
-    private SWRLAtom convertAtom(Atom atom) {
-        if (atom instanceof ClassAtom) {
-            return convertClassAtom((ClassAtom) atom);
-        } else if (atom instanceof SWRLBuiltIn) {
-            return convertBuiltInAtom((SWRLBuiltIn) atom);
-        } else if (atom instanceof PropertyAtom) {
-            return convertPropertyAtom((PropertyAtom) atom);
-        } else {
-            throw new IllegalArgumentException("Atom type not supported: " + atom);
+    private SWRLClassAtom classAtom(String className, String individualName) {
+        if (className == null) {
+            throw new IllegalArgumentException("Individual type not found: " + individualName);
         }
-    }
 
-    private SWRLAtom convertBuiltInAtom(SWRLBuiltIn builtIn) {
-        List<SWRLDArgument> arguments = Arrays.asList(
-                getVariableArgument((Unknown) builtIn.getLeftOperand()),
-                getDoubleSWRLDargument((Value) builtIn.getRightOperand()));
-        return context.getFactory().getSWRLBuiltInAtom(getBuiltInIRI(builtIn.getAtomName()), arguments);
-    }
-
-    private SWRLAtom convertClassAtom(ClassAtom atom) {
-        SWRLIArgument argument = getSWRLIArgument(atom.getOperand());
-        OWLClass owlClass = context.getOWLClass(atom.getAtomName());
+        SWRLIArgument argument = getNamedIndividualArgument(individualName);
+        OWLClass owlClass = context.getOWLClass(className);
         return context.getFactory().getSWRLClassAtom(owlClass, argument);
     }
 
-    private SWRLAtom convertPropertyAtom(PropertyAtom propertyAtom) {
-        OWLDataProperty owlDataProperty = context.getDataProperty(propertyAtom.getAtomName());
-        SWRLIArgument individualArgument = getSWRLIArgument(propertyAtom.getLeftOperand());
-        SWRLDArgument dataArgument = getSWRLDArgument(propertyAtom);
+    private SWRLDataPropertyAtom sensorValueProperty(String propertyName, String individualName, Unknown unknown) {
+        OWLDataProperty owlDataProperty = context.getDataProperty(propertyName);
+        SWRLIArgument individualArgument = getNamedIndividualArgument(individualName);
+        SWRLDArgument dataArgument = getVariableArgument(unknown);
         return context.getFactory().getSWRLDataPropertyAtom(owlDataProperty, individualArgument, dataArgument);
     }
 
-    private SWRLDArgument getSWRLDArgument(PropertyAtom propertyAtom) {
-        Variable value = propertyAtom.getRightOperand();
+    private SWRLAtom swrlBuiltIn(Predicate predicate, Unknown unknown) {
+        List<SWRLDArgument> arguments = Arrays.asList(
+                getVariableArgument(unknown),
+                getLiteralArgument(configuration.sensorValueProperty(predicate), predicate.getRightOperand().asString()));
+        return context.getFactory().getSWRLBuiltInAtom(getBuiltInIRI(predicate.getOperator()), arguments);
 
-        if (value instanceof Unknown) {
-            return getVariableArgument((Unknown) value);
-        }
+    }
 
-        if (propertyAtom.getAtomName().equals("hasBinaryValue")) {
-            return getBinarySWRLDArgument((Value) value);
+    private SWRLDArgument getLiteralArgument(String propertyName, String value) {
+        if (propertyName.equals("hasBinaryValue")) {
+            return getBooleanLiteral(value);
         } else {
-            return getDoubleSWRLDargument((Value) value);
+            return getDoubleLiteral(value);
         }
     }
 
-    private SWRLDArgument getDoubleSWRLDargument(Value variable) {
-        String value = variable.getValue();
+    private SWRLLiteralArgument getDoubleLiteral(String value) {
         OWLLiteral literal = context.getFactory().getOWLLiteral(Double.parseDouble(value));
         return context.getFactory().getSWRLLiteralArgument(literal);
     }
 
-    private SWRLDArgument getBinarySWRLDArgument(Value value) {
-        String stringValue = value.getValue();
-        OWLLiteral literal = context.getFactory().getOWLLiteral(stringValue.equals("1.00"));
+    private SWRLLiteralArgument getBooleanLiteral(String value) {
+        OWLLiteral literal = context.getFactory().getOWLLiteral(value.equals("1.00"));
         return context.getFactory().getSWRLLiteralArgument(literal);
-    }
-
-    private SWRLIArgument getSWRLIArgument(Variable variable) {
-        if (variable instanceof Unknown) {
-            return getVariableArgument((Unknown) variable);
-        } else {
-            return getNamedIndividualArgument((Individual) variable);
-        }
     }
 
     private SWRLVariable getVariableArgument(Unknown unknown) {
@@ -108,24 +121,19 @@ public class OWLBinding implements Function<SWRLRule, org.semanticweb.owlapi.mod
         return context.getFactory().getSWRLVariable(variableIRI);
     }
 
-    private SWRLIndividualArgument getNamedIndividualArgument(Individual individual) {
-        OWLNamedIndividual owlIndividual = context.getIndividual(individual.getIndividualName());
+    private SWRLIndividualArgument getNamedIndividualArgument(String individualName) {
+        OWLNamedIndividual owlIndividual = context.getIndividual(individualName);
         return context.getFactory().getSWRLIndividualArgument(owlIndividual);
     }
 
-    private IRI getBuiltInIRI(String atomName) {
-        if (atomName.equals(SWRLExpression.SWRL_EQUAL)) {
-            return SWRLBuiltInsVocabulary.EQUAL.getIRI();
-        } else if (atomName.equals(SWRLExpression.SWRL_GREATER_THAN)) {
-            return SWRLBuiltInsVocabulary.GREATER_THAN.getIRI();
-        } else if (atomName.equals(SWRLExpression.SWRL_GREATER_THAN_OR_EQUAL)) {
-            return SWRLBuiltInsVocabulary.GREATER_THAN_OR_EQUAL.getIRI();
-        } else if (atomName.equals(SWRLExpression.SWRL_LESS_THAN)) {
-            return SWRLBuiltInsVocabulary.LESS_THAN.getIRI();
-        } else if (atomName.equals(SWRLExpression.SWRL_LESS_THAN_OR_EQUAL)) {
-            return SWRLBuiltInsVocabulary.LESS_THAN_OR_EQUAL.getIRI();
-        } else {
-            throw new IllegalArgumentException("Built in unknown: " + atomName);
+    private IRI getBuiltInIRI(Operator operator) {
+        switch (operator) {
+            case EQUAL: return SWRLBuiltInsVocabulary.EQUAL.getIRI();
+            case LESS_THAN: return SWRLBuiltInsVocabulary.LESS_THAN.getIRI();
+            case LESS_THAN_OR_EQUAL: return SWRLBuiltInsVocabulary.LESS_THAN_OR_EQUAL.getIRI();
+            case GREATER_THAN: return SWRLBuiltInsVocabulary.GREATER_THAN.getIRI();
+            case GREATER_THAN_OR_EQUAL: return SWRLBuiltInsVocabulary.GREATER_THAN_OR_EQUAL.getIRI();
+            default: throw new IllegalArgumentException("Built in unknown: " + operator.name());
         }
     }
 

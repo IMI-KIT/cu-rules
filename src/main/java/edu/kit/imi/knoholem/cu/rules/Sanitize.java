@@ -92,13 +92,15 @@ public class Sanitize {
     /**
      * Main method.
      *
-     * @param args a path to an existing ontology document as a first argument and paths to existing rules as consequent varargs.
+     * @param args <code>args[0]</code>: a path to an existing ontology document, <code>args[1..]</code>: paths to
+     *             existing rules.
      * @throws OWLOntologyCreationException if the ontology could not be loaded.
      * @throws IOException                  in case of IO error when reading the rule files.
      */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException {
         if (args.length < 2) {
             System.err.println("Please, provide at least two arguments.");
+            System.exit(1);
         }
 
         // Arguments

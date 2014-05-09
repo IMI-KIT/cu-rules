@@ -1,7 +1,8 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.RuleMetadata;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Function;
-import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-public class RuleAnnotator implements Function<SWRLRule, Set<OWLAnnotation>> {
+public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLAnnotation>> {
 
     private final OntologyContext ontology;
 
@@ -28,8 +29,9 @@ public class RuleAnnotator implements Function<SWRLRule, Set<OWLAnnotation>> {
     }
 
     @Override
-    public Set<OWLAnnotation> apply(SWRLRule input) {
-        return ruleAnnotations(getSuggestionText(input), input.getMetadata().getWeight());
+    public Set<OWLAnnotation> apply(SensitivityAnalysisRule input) {
+        RuleMetadata metadata = input.getMetadata();
+        return ruleAnnotations(getSuggestionText(metadata), metadata.getWeight());
     }
 
     public int incrementRuleId() {
@@ -66,8 +68,8 @@ public class RuleAnnotator implements Function<SWRLRule, Set<OWLAnnotation>> {
         return Collections.singleton(suggestion);
     }
 
-    private String getSuggestionText(SWRLRule input) {
-        return input.getMetadata().getType() + " " + input.getMetadata().getReduction();
+    private String getSuggestionText(RuleMetadata metadata) {
+        return metadata.getType() + " " + metadata.getReduction();
     }
 
 }
