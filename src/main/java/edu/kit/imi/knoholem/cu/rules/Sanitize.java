@@ -39,18 +39,17 @@ public class Sanitize {
     /**
      * Default constructor.
      *
-     * @param ontologyContext the ontology to consult.
+     * @param ontologyContext the ontology to consult when reporting the offences.
      * @param rules a set of rules to process.
      */
     public Sanitize(OntologyContext ontologyContext, Collection<? extends SensitivityAnalysisRule> rules) {
-        this.ontologyContext = ontologyContext;
-        this.rules = Monads.list(rules);
+        this(ontologyContext, Monads.list(rules));
     }
 
     /**
      * Default constructor.
      *
-     * @param ontologyContext the ontology to consult.
+     * @param ontologyContext the ontology to consult when reporting the offences.
      * @param rules a set of rules to process.
      */
     public Sanitize(OntologyContext ontologyContext, Monad<SensitivityAnalysisRule> rules) {
