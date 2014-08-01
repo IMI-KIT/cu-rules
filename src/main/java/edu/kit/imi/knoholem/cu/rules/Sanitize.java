@@ -91,10 +91,13 @@ public class Sanitize {
     /**
      * Main method.
      *
-     * @param args <code>args[0]</code>: a path to an existing ontology document, <code>args[1..]</code>: paths to
-     *             existing rules.
+     * @param args <ul>
+     *     <li><code>args[0]</code>: a path to an existing ontology document,</li>
+     *     <li><code>args[1..]</code>: paths to existing rules.</li>
+     * </ul>
+     *
      * @throws OWLOntologyCreationException if the ontology could not be loaded.
-     * @throws IOException                  in case of IO error when reading the rule files.
+     * @throws IOException                  in case of an IO error when reading the rule files.
      */
     public static void main(String[] args) throws OWLOntologyCreationException, IOException {
         if (args.length < 2) {
