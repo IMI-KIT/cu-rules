@@ -8,17 +8,14 @@ import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
  */
 public class OntologySWRLConverterConfiguration extends SWRLConverterConfiguration {
 
-    public static final String OCCUPANCY_SENSOR_CLASS = "OccupancySensor";
-    public static final String OPENING_SENSOR_CLASS = "OpeningSensor";
-
-    public static final String LIGHTING_SET_POINT = "LightingSetPoint";
-    public static final String WINDOW_SET_POINT = "WindowSetPoint";
-    public static final String SHADING_SET_POINT = "ShadingSetPoint";
-
     private final OntologyContext ontology;
 
     public OntologySWRLConverterConfiguration(OntologyContext ontology) {
         this.ontology = ontology;
+    }
+
+    public OntologyContext getOntologyContext() {
+        return ontology;
     }
 
     @Override
@@ -40,15 +37,14 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
             throw new IllegalArgumentException("Class membership of individual undefined: " + predicate.getLeftOperand().asString());
         }
 
-        if (sensorClass.equals(OCCUPANCY_SENSOR_CLASS)
-                || sensorClass.equals(OPENING_SENSOR_CLASS)
-                || sensorClass.equals(LIGHTING_SET_POINT)
-                || sensorClass.equals(WINDOW_SET_POINT)
-                || sensorClass.equals(SHADING_SET_POINT)) {
+        return sensorValueProperty(sensorClass);
+    }
+
+    String sensorValueProperty(String sensorClass) {
+        if (ToggableSensors.names().contains(sensorClass)) {
             return "hasBinaryValue";
         } else {
             return "hasAnalogValue";
         }
     }
-
 }
