@@ -29,6 +29,18 @@ public class RuleQuery {
         return Collections.unmodifiableSet(result);
     }
 
+    public Set<Individual> getIndividualsInConsequent(SWRLRule rule) {
+        Set<Individual> result = new HashSet<Individual>();
+
+        for (ClassAtom classAtom : getIndividualClassAtomsInConsequent(rule)) {
+            result.add((Individual) classAtom.getOperand());
+        }
+
+        result.addAll(extractIndividualReferencesFromProperties(rule.getConsequent()));
+
+        return Collections.unmodifiableSet(result);
+    }
+
     public Set<ClassAtom> getClassAtoms(SWRLRule swrlRule) {
         Set<ClassAtom> result = new HashSet<ClassAtom>();
 

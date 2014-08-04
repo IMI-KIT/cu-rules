@@ -66,7 +66,7 @@ public class ConvertRules {
         }
 
         /**
-         * Processes each given file sequentially, logging the activity on the standard out.
+         * Processes each given file sequentially, logging the activity on the standard error.
          *
          * @param configuration the rule parser configuration to use.
          * @param processor     the processor to be invoked on each file.

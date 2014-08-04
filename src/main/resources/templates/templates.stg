@@ -9,7 +9,13 @@ PREFIX $prefix$: <$namespace$>
 >>
 
 individualInClass(prefix, namespace, className, individualName) ::= <<
-prefixes(prefix, namespace)
+$prefixes(prefix, namespace)$
 
-ASK { $individualName$ a $className$ }
+ASK { $prefix$:$individualName$ a $prefix$:$className$ }
+>>
+
+declared_individual(prefix, namespace, className, individualName) ::= <<
+$prefixes(prefix, namespace)$
+
+ASK { $prefix$:$individualName$ a owl:NamedIndividual }
 >>

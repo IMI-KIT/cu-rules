@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-class Templates {
+public class Templates {
 
     public static Templates loadTemplates() {
         URL resourceURL = Templates.class.getResource("/templates/templates.stg");

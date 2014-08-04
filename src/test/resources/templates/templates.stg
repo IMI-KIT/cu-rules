@@ -1,3 +1,15 @@
 delimiters "$", "$"
 
 import "prefixes.stg"
+
+individualInClass(prefix, namespace, className, individualName) ::= <<
+$prefixes(prefix, namespace)$
+
+ASK { $prefix$:$individualName$ a $prefix$:$className$ }
+>>
+
+declared_individual(prefix, namespace, className, individualName) ::= <<
+$prefixes(prefix, namespace)$
+
+ASK { $prefix$:$individualName$ a owl:NamedIndividual }
+>>

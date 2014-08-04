@@ -1,5 +1,6 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
+import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,11 @@ public class OntologyContextTest {
     }
 
     @Test
+    public void testOntologyNamespace() {
+        Assert.assertEquals("http://www.semanticweb.org/ontologies/2012/9/knoholem.owl#", context.getOntologyNamespace());
+    }
+
+    @Test
     public void testContainsIndividual() {
         Assert.assertTrue(context.containsIndividual("17_1_GRFMET_6"));
         Assert.assertFalse(context.containsIndividual("foobar"));
@@ -40,4 +46,8 @@ public class OntologyContextTest {
         Assert.assertEquals("TemperatureSensor", context.getRepresentativeClass("17_1_GRFMET_6"));
     }
 
+    @Test
+    public void testOntologyFormat() {
+        Assert.assertEquals(new TurtleOntologyFormat(), context.getOntologyFormat());
+    }
 }

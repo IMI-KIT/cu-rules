@@ -177,4 +177,11 @@ public class OntologyContext {
         return "#" + resourceName;
     }
 
+    public OWLOntologyFormat getOntologyFormat() {
+        return manager.getOntologyFormat(ontology);
+    }
+
+    public String getOntologyNamespace() {
+        return getOntologyIRI().toString() + "#";
+    }
 }

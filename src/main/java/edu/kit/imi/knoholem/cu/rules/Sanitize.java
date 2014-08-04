@@ -27,7 +27,7 @@ import java.util.List;
  * </code>
  * </p>
  *
- * <p>The API exposes the said offenders through monads.</p>
+ * <p>The API exposes the offenders through monads.</p>
  *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */

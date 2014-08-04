@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-class ListMonad<T> implements Monad<T>{
+class ListMonad<T> implements Monad<T> {
 
     private final List<T> elements;
 
