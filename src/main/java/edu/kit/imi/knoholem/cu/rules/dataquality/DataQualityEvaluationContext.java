@@ -14,7 +14,6 @@ import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Paths;
 
@@ -26,13 +25,18 @@ public class DataQualityEvaluationContext implements Function<Criterion, Boolean
     private final OntologyContext ontologyContext;
     private final Model model;
 
-    public DataQualityEvaluationContext(OntologyContext ontologyContext) throws MalformedURLException, FileNotFoundException {
+    public DataQualityEvaluationContext(OntologyContext ontologyContext) {
         this.ontologyContext = ontologyContext;
 
         this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF);
         URI uri = ontologyContext.getDocumentIRI().toURI();
-        FileInputStream fio = new FileInputStream(Paths.get(uri).toFile());
-        this.model.read(fio, ontologyContext.getOntologyIRI().toString() + "#", getDocumentLanguage());
+        FileInputStream fio;
+        try {
+            fio = new FileInputStream(Paths.get(uri).toFile());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        this.model.read(fio, ontologyContext.getOntologyNamespace(), getDocumentLanguage());
     }
 
     @Override

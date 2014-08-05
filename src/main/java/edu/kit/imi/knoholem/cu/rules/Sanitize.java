@@ -93,7 +93,7 @@ public class Sanitize {
      *
      * @param args <ul>
      *     <li><code>args[0]</code>: a path to an existing ontology document,</li>
-     *     <li><code>args[1..]</code>: paths to existing rules.</li>
+     *     <li><code>args[1..]</code>: paths to existing rules listings.</li>
      * </ul>
      *
      * @throws OWLOntologyCreationException if the ontology could not be loaded.

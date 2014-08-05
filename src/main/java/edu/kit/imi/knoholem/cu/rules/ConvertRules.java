@@ -18,7 +18,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 /**
- * Main library class. Useful for sampling the rules which the library produces.
+ * Main library class. Useful for sampling the rules that the library produces.
  *
  * @see edu.kit.imi.knoholem.cu.rules.ConvertRules::main(String[])
  */
