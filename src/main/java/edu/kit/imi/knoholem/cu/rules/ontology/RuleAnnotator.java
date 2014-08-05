@@ -1,8 +1,9 @@
 package edu.kit.imi.knoholem.cu.rules.ontology;
 
-import edu.kit.imi.knoholem.cu.rules.atoms.RuleMetadata;
+import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Function;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLAnnotation>> {
 
     private final OntologyContext ontology;
+    private final OntologySWRLConverterConfiguration configuration;
 
     private int ruleCounter;
 
@@ -25,13 +27,19 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
 
     public RuleAnnotator(OntologyContext ontologyContext, int initialCount) {
         this.ontology = ontologyContext;
+        this.configuration = new OntologySWRLConverterConfiguration(ontology);
         this.ruleCounter = initialCount;
     }
 
     @Override
     public Set<OWLAnnotation> apply(SensitivityAnalysisRule input) {
-        RuleMetadata metadata = input.getMetadata();
-        return ruleAnnotations(getSuggestionText(metadata), metadata.getWeight());
+        Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
+        annotations.addAll(ruleIDAnnotation(incrementRuleId()));
+        annotations.addAll(ruleSuggestionAnnotation(getSuggestionText(input)));
+        annotations.addAll(ruleWeightAnnotation(input.getMetadata().getWeight()));
+        annotations.add(ruleReductionAnnotation((float) input.getMetadata().getReduction().doubleValue()));
+        annotations.add(ruleTypeAnnotation(input.getMetadata().getType()));
+        return annotations;
     }
 
     public int incrementRuleId() {
@@ -39,19 +47,23 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         return ruleCounter;
     }
 
-    private Set<OWLAnnotation> ruleAnnotations(String suggestionText, double weight) {
-        Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
-        annotations.addAll(ruleIDAnnotation(incrementRuleId()));
-        annotations.addAll(ruleSuggestionAnnotation(suggestionText));
-        annotations.addAll(ruleWeightAnnotation(weight));
-        return annotations;
-    }
-
     private Set<OWLAnnotation> ruleIDAnnotation(int ruleId) {
         OWLAnnotation idLabel = ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
                 ontology.getFactory().getOWLLiteral("#RULEID" + ruleId));
         return Collections.singleton(idLabel);
+    }
+
+    private OWLAnnotation ruleReductionAnnotation(Float reductionRate) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasReduction")),
+                ontology.getFactory().getOWLLiteral(reductionRate));
+    }
+
+    private OWLAnnotation ruleTypeAnnotation(String ruleType) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasRuleType")),
+                ontology.getFactory().getOWLLiteral(ruleType));
     }
 
     private Set<OWLAnnotation> ruleSuggestionAnnotation(String suggestionText) {
@@ -68,8 +80,14 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         return Collections.singleton(suggestion);
     }
 
-    private String getSuggestionText(RuleMetadata metadata) {
-        return metadata.getType() + " " + metadata.getReduction();
+    private String getSuggestionText(SensitivityAnalysisRule rule) {
+        Predicate predicate = rule.getConsequent().iterator().next();
+        String individualName = predicate.getLeftOperand().asString();
+        if (configuration.isToggable(individualName)) {
+            String toggleValue = predicate.getRightOperand().asDouble() == 0d ? "off" : "on";
+            return "Switch \"" + individualName + "\" " + toggleValue + ".";
+        } else {
+            return "Set \"" + individualName + "\" to \"" + predicate.getRightOperand().asString() + "\".";
+        }
     }
-
 }

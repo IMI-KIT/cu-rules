@@ -30,8 +30,8 @@ public class SensitivityAnalysisRule {
         return Collections.unmodifiableList(consequent);
     }
 
-    public void setConsequent(List<Predicate> conclusionPredicates) {
-        consequent.addAll(conclusionPredicates);
+    public void setConsequent(List<Predicate> consequentPredicates) {
+        consequent.addAll(consequentPredicates);
     }
 
     public void setAntecedent(List<Predicate> antecedentPredicates) {

@@ -40,6 +40,16 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
         return sensorValueProperty(sensorClass);
     }
 
+    public boolean isToggable(String individualName) {
+        String representativeClass = ontology.getRepresentativeClass(individualName);
+
+        if (representativeClass == null) {
+            throw new IllegalArgumentException("Class membership of individual undefined: " + individualName);
+        }
+
+        return ToggableSensors.names().contains(representativeClass);
+    }
+
     String sensorValueProperty(String sensorClass) {
         if (ToggableSensors.names().contains(sensorClass)) {
             return "hasBinaryValue";
