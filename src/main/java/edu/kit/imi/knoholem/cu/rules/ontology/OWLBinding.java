@@ -36,13 +36,20 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
         try {
             Unknowns unknowns = new Unknowns();
             Set<SWRLAtom> antecedentAtoms = collectAtoms(input.getAntecedent(), unknowns);
-            Set<SWRLAtom> consequentAtoms = collectAtoms(input.getConsequent(), unknowns);
+            Set<SWRLAtom> consequentAtoms = collectConsequent(input);
             Set<OWLAnnotation> annotations = ruleAnnotations.apply(input);
 
             return context.getFactory().getSWRLRule(antecedentAtoms, consequentAtoms, annotations);
         } catch (Exception e) {
             throw new SWRLConverterError(input, e);
         }
+    }
+
+    private Set<SWRLAtom> collectConsequent(SensitivityAnalysisRule rule) {
+        Predicate predicate = rule.getConsequent().iterator().next();
+        String individualName = predicate.getLeftOperand().asString();
+        String className = configuration.sensorClass(predicate);
+        return Collections.<SWRLAtom>singleton(classAtom(className, individualName));
     }
 
     private Set<SWRLAtom> collectAtoms(List<Predicate> predicates, Unknowns unknowns) {
