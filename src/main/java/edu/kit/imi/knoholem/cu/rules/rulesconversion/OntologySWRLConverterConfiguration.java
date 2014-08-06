@@ -8,14 +8,13 @@ import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
  */
 public class OntologySWRLConverterConfiguration extends SWRLConverterConfiguration {
 
+    public static final String HAS_BINARY_VALUE = "hasBinaryValue";
+    public static final String HAS_ANALOG_VALUE = "hasAnalogValue";
+
     private final OntologyContext ontology;
 
     public OntologySWRLConverterConfiguration(OntologyContext ontology) {
         this.ontology = ontology;
-    }
-
-    public OntologyContext getOntologyContext() {
-        return ontology;
     }
 
     @Override
@@ -52,9 +51,9 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
 
     String sensorValueProperty(String sensorClass) {
         if (ToggableSensors.names().contains(sensorClass)) {
-            return "hasBinaryValue";
+            return HAS_BINARY_VALUE;
         } else {
-            return "hasAnalogValue";
+            return HAS_ANALOG_VALUE;
         }
     }
 }

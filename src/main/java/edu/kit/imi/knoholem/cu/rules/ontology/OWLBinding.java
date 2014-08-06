@@ -6,7 +6,7 @@ import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMap;
 import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMapEntry;
 import edu.kit.imi.knoholem.cu.rules.functions.Function;
-import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterError;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.Unknowns;
 import edu.kit.imi.knoholem.cu.rules.swrlentities.Unknown;
@@ -21,10 +21,10 @@ import java.util.*;
 public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
 
     private final OntologyContext context;
-    private final SWRLConverterConfiguration configuration;
+    private final OntologySWRLConverterConfiguration configuration;
     private final Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations;
 
-    public OWLBinding(OntologyContext context, SWRLConverterConfiguration configuration,
+    public OWLBinding(OntologyContext context, OntologySWRLConverterConfiguration configuration,
                       Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations) {
         this.context = context;
         this.configuration = configuration;
@@ -35,8 +35,8 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
     public SWRLRule apply(SensitivityAnalysisRule input) {
         try {
             Unknowns unknowns = new Unknowns();
-            Set<SWRLAtom> antecedentAtoms = collectAtoms(input.getAntecedent(), unknowns);
-            Set<SWRLAtom> consequentAtoms = collectConsequent(input);
+            Set<SWRLAtom> antecedentAtoms = collectAntecedentAtoms(input.getAntecedent(), unknowns);
+            Set<SWRLAtom> consequentAtoms = collectConsequentAtoms(input);
             Set<OWLAnnotation> annotations = ruleAnnotations.apply(input);
 
             return context.getFactory().getSWRLRule(antecedentAtoms, consequentAtoms, annotations);
@@ -45,21 +45,21 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
         }
     }
 
-    private Set<SWRLAtom> collectConsequent(SensitivityAnalysisRule rule) {
+    private Set<SWRLAtom> collectAntecedentAtoms(List<Predicate> predicates, Unknowns unknowns) {
+        Set<SWRLAtom> result = new HashSet<SWRLAtom>();
+
+        for (PredicateMapEntry entry : new PredicateMap(predicates).byLeftOperand()) {
+            result.addAll(convertSensorValuePredicates(entry, unknowns));
+        }
+
+        return result;
+    }
+
+    private Set<SWRLAtom> collectConsequentAtoms(SensitivityAnalysisRule rule) {
         Predicate predicate = rule.getConsequent().iterator().next();
         String individualName = predicate.getLeftOperand().asString();
         String className = configuration.sensorClass(predicate);
         return Collections.<SWRLAtom>singleton(classAtom(className, individualName));
-    }
-
-    private Set<SWRLAtom> collectAtoms(List<Predicate> predicates, Unknowns unknowns) {
-        Set<SWRLAtom> result = new HashSet<SWRLAtom>();
-
-        for (PredicateMapEntry entry : new PredicateMap(predicates).byLeftOperand()) {
-                result.addAll(convertSensorValuePredicates(entry, unknowns));
-        }
-
-        return result;
     }
 
     private List<SWRLAtom> convertSensorValuePredicates(PredicateMapEntry predicates, Unknowns unknowns) {
@@ -73,8 +73,14 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
 
         atoms.add(classAtom(className, individualName));
         atoms.add(sensorValueProperty(propertyName, individualName, unknown));
-        for (Predicate predicate : predicates.getPredicates()) {
+
+        if (propertyName.equals(OntologySWRLConverterConfiguration.HAS_BINARY_VALUE)) {
+            Predicate predicate = new Predicate(individualName, Operator.EQUAL, predicates.getFirstPredicate().getRightOperand().asString());
             atoms.add(swrlBuiltIn(predicate, unknown));
+        } else {
+            for (Predicate predicate : predicates.getPredicates()) {
+                atoms.add(swrlBuiltIn(predicate, unknown));
+            }
         }
 
         return atoms;
@@ -135,13 +141,18 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
 
     private IRI getBuiltInIRI(Operator operator) {
         switch (operator) {
-            case EQUAL: return SWRLBuiltInsVocabulary.EQUAL.getIRI();
-            case LESS_THAN: return SWRLBuiltInsVocabulary.LESS_THAN.getIRI();
-            case LESS_THAN_OR_EQUAL: return SWRLBuiltInsVocabulary.LESS_THAN_OR_EQUAL.getIRI();
-            case GREATER_THAN: return SWRLBuiltInsVocabulary.GREATER_THAN.getIRI();
-            case GREATER_THAN_OR_EQUAL: return SWRLBuiltInsVocabulary.GREATER_THAN_OR_EQUAL.getIRI();
-            default: throw new IllegalArgumentException("Built in unknown: " + operator.name());
+            case EQUAL:
+                return SWRLBuiltInsVocabulary.EQUAL.getIRI();
+            case LESS_THAN:
+                return SWRLBuiltInsVocabulary.LESS_THAN.getIRI();
+            case LESS_THAN_OR_EQUAL:
+                return SWRLBuiltInsVocabulary.LESS_THAN_OR_EQUAL.getIRI();
+            case GREATER_THAN:
+                return SWRLBuiltInsVocabulary.GREATER_THAN.getIRI();
+            case GREATER_THAN_OR_EQUAL:
+                return SWRLBuiltInsVocabulary.GREATER_THAN_OR_EQUAL.getIRI();
+            default:
+                throw new IllegalArgumentException("Built in unknown: " + operator.name());
         }
     }
-
 }

@@ -15,9 +15,13 @@ public class Predicate {
     private final Operator operator;
 
     public Predicate(String leftOperand, String operator, String rightOperand) {
+        this(leftOperand, parseOperator(operator), rightOperand);
+    }
+
+    public Predicate(String leftOperand, Operator operator, String rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
-        this.operator = parseOperator(operator);
+        this.operator = operator;
     }
 
     public Literal getLeftOperand() {
@@ -77,7 +81,7 @@ public class Predicate {
         return true;
     }
 
-    private Operator parseOperator(String operator) {
+    private static Operator parseOperator(String operator) {
         if (operator.equals("<=")) {
             return Operator.LESS_THAN_OR_EQUAL;
         } else if (operator.equals(">=")) {
