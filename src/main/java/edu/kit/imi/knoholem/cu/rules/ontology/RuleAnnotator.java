@@ -7,7 +7,6 @@ import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfig
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,9 +33,9 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
     @Override
     public Set<OWLAnnotation> apply(SensitivityAnalysisRule input) {
         Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
-        annotations.addAll(ruleIDAnnotation(incrementRuleId()));
-        annotations.addAll(ruleSuggestionAnnotation(getSuggestionText(input)));
-        annotations.addAll(ruleWeightAnnotation(input.getMetadata().getWeight()));
+        annotations.add(ruleIDAnnotation(incrementRuleId()));
+        annotations.add(ruleSuggestionAnnotation(getSuggestionText(input)));
+        annotations.add(ruleWeightAnnotation(input.getMetadata().getWeight()));
         annotations.add(ruleReductionAnnotation((float) input.getMetadata().getReduction().doubleValue()));
         annotations.add(ruleTypeAnnotation(input.getMetadata().getType()));
         return annotations;
@@ -47,11 +46,14 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         return ruleCounter;
     }
 
-    private Set<OWLAnnotation> ruleIDAnnotation(int ruleId) {
-        OWLAnnotation idLabel = ontology.getFactory().getOWLAnnotation(
+    private OWLAnnotation ruleIDAnnotation(int ruleId) {
+        return ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
-                ontology.getFactory().getOWLLiteral("#RULEID" + ruleId));
-        return Collections.singleton(idLabel);
+                ontology.getFactory().getOWLLiteral(createRuleId(ruleId)));
+    }
+
+    String createRuleId(int ruleId) {
+        return "#RULEID" + String.format("%06d", ruleId);
     }
 
     private OWLAnnotation ruleReductionAnnotation(Float reductionRate) {
@@ -66,18 +68,16 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
                 ontology.getFactory().getOWLLiteral(ruleType));
     }
 
-    private Set<OWLAnnotation> ruleSuggestionAnnotation(String suggestionText) {
-        OWLAnnotation suggestion = ontology.getFactory().getOWLAnnotation(
+    private OWLAnnotation ruleSuggestionAnnotation(String suggestionText) {
+        return ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasSuggestion")),
                 ontology.getFactory().getOWLLiteral(suggestionText));
-        return Collections.singleton(suggestion);
     }
 
-    private Set<OWLAnnotation> ruleWeightAnnotation(double weight) {
-        OWLAnnotation suggestion = ontology.getFactory().getOWLAnnotation(
+    private OWLAnnotation ruleWeightAnnotation(double weight) {
+        return ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasWeight")),
                 ontology.getFactory().getOWLLiteral(weight));
-        return Collections.singleton(suggestion);
     }
 
     private String getSuggestionText(SensitivityAnalysisRule rule) {
