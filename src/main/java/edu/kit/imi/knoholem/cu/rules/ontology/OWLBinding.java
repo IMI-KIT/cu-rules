@@ -16,6 +16,8 @@ import org.semanticweb.owlapi.vocab.SWRLBuiltInsVocabulary;
 import java.util.*;
 
 /**
+ * Converts a {@link SensitivityAnalysisRule} to OWL API's {@link SWRLRule} saving the metadata into rule annotations.
+ *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
@@ -112,7 +114,7 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
     }
 
     private SWRLDArgument getLiteralArgument(String propertyName, String value) {
-        if (propertyName.equals("hasBinaryValue")) {
+        if (propertyName.equals(OntologySWRLConverterConfiguration.HAS_BINARY_VALUE)) {
             return getBooleanLiteral(value);
         } else {
             return getDoubleLiteral(value);

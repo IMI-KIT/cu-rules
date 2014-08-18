@@ -2,14 +2,17 @@ package edu.kit.imi.knoholem.cu.rules;
 
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Collect;
+import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParseError;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessor;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessorResponse;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverter;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,15 +34,16 @@ public class ConvertRules {
      * @param args a path to a text file containing the rules.
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
-        if (args.length < 1) {
-            System.err.println("Please, provide at least one path to the sensitivity analysis rules.");
+    public static void main(String[] args) throws IOException, OWLOntologyCreationException {
+        if (args.length < 2) {
+            System.err.println("Usage: ConvertRules <ontology> <rules...>");
             System.exit(1);
         }
 
-        Minigun minigun = new Minigun(Arrays.asList(args));
+        OntologyContext ontology = OntologyContext.load(new File(args[0]));
+        Minigun minigun = new Minigun(Arrays.asList(args).subList(1, args.length));
 
-        ConvertPrint processor = new ConvertPrint(SWRLConverterConfiguration.getDefaultConfiguration(), 100, System.out);
+        ConvertPrint processor = new ConvertPrint(new OntologySWRLConverterConfiguration(ontology), 100, System.out);
         minigun.process(RuleParserConfiguration.getDefaultConfiguration(), processor);
 
         System.err.printf("\n---\nRules converted: %d\nErrors encountered: %d\n",

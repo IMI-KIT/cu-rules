@@ -40,8 +40,6 @@ public class SWRLConverter {
 
     private List<Atom> collectAntecedent(List<Predicate> inputAntecedent, Unknowns unknowns) {
         List<Atom> result = new ArrayList<Atom>();
-        // classify the predicates
-        // convert each predicate and return a list
         for (PredicateMapEntry entry : new PredicateMap(inputAntecedent).byLeftOperand()) {
             if (entry.isSingular()) {
                 result.addAll(convertSensorValuePredicate(entry.getFirstPredicate(), unknowns));

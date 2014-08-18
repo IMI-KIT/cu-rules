@@ -29,6 +29,7 @@ import java.util.List;
  *
  * <p>The API exposes the offenders through monads.</p>
  *
+ * @see Sanitize#main(String[])
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class Sanitize {

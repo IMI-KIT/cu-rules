@@ -7,7 +7,7 @@ import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import java.io.*;
 
 /**
- * Processes a list of sensitivity analysis rules in a file passing each parsed rule to a {@link RuleProcessor}.
+ * Parses the sensitivity analysis rules from a file passing each parsed rule to a {@link RuleProcessor}.
  *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
@@ -44,7 +44,7 @@ public class RuleFileParser {
                 try {
                     response = ruleProcessor.onParse(parser.parseRule(ruleLiteral));
                 } catch (RuleParseError error) {
-                    response = ruleProcessor.onError(error);
+                    response = ruleProcessor.onError(new RuleFileParserError(file, error));
                 }
             }
         }
