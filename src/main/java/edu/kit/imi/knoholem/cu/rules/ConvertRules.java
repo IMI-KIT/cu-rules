@@ -53,10 +53,16 @@ public class ConvertRules {
         for (RuleParseError error : processor.getErrors()) {
             System.err.println(error.getMessage() + " (" + error.getRuleLiteral() + ")");
         }
+
+        if (processor.hasAnyErrors()) {
+            System.exit(1);
+        } else {
+            System.exit(0);
+        }
     }
 
     /**
-     * A utility for processing rule files passed from the command line.
+     * A utility for parsing rule files passed from the command line.
      */
     static class Minigun {
 
@@ -195,6 +201,15 @@ public class ConvertRules {
             failList.push(error);
             failCount++;
             return RuleProcessorResponse.OK;
+        }
+
+        /**
+         * Answers if the processor has encountered any errors.
+         *
+         * @return <code>true</code>, iff the list of errors is nonempty, <code>false</code> otherwise.
+         */
+        public boolean hasAnyErrors() {
+            return !failList.isEmpty();
         }
 
         /**

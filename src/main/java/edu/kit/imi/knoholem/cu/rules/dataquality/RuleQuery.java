@@ -62,6 +62,18 @@ public class RuleQuery {
         return Collections.unmodifiableSet(result);
     }
 
+    public Set<PropertyAtom> getQualifiedPropertyAtomsInAntecedent(String propertyName, SWRLRule rule) {
+        Set<PropertyAtom> result = new HashSet<PropertyAtom>();
+
+        for (PropertyAtom atom : extractPropertyAtoms(rule.getAntecedent())) {
+            if (atom.getAtomName().equals(propertyName)) {
+                result.add(atom);
+            }
+        }
+
+        return result;
+    }
+
     Set<ClassAtom> getIndividualClassAtoms(SWRLRule swrlRule) {
         Set<ClassAtom> result = new HashSet<ClassAtom>();
 
