@@ -8,9 +8,6 @@ import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
  */
 public class OntologySWRLConverterConfiguration extends SWRLConverterConfiguration {
 
-    public static final String HAS_BINARY_VALUE = "hasBinaryValue";
-    public static final String HAS_ANALOG_VALUE = "hasAnalogValue";
-
     private final OntologyContext ontology;
 
     public OntologySWRLConverterConfiguration(OntologyContext ontology) {
@@ -37,23 +34,5 @@ public class OntologySWRLConverterConfiguration extends SWRLConverterConfigurati
         }
 
         return sensorValueProperty(sensorClass);
-    }
-
-    public boolean isToggable(String individualName) {
-        String representativeClass = ontology.getRepresentativeClass(individualName);
-
-        if (representativeClass == null) {
-            throw new IllegalArgumentException("Class membership of individual undefined: " + individualName);
-        }
-
-        return ToggableSensors.names().contains(representativeClass);
-    }
-
-    String sensorValueProperty(String sensorClass) {
-        if (ToggableSensors.names().contains(sensorClass)) {
-            return HAS_BINARY_VALUE;
-        } else {
-            return HAS_ANALOG_VALUE;
-        }
     }
 }

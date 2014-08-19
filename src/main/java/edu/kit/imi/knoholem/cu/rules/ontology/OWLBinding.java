@@ -7,6 +7,7 @@ import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMap;
 import edu.kit.imi.knoholem.cu.rules.atoms.processing.PredicateMapEntry;
 import edu.kit.imi.knoholem.cu.rules.functions.Function;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterError;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.Unknowns;
 import edu.kit.imi.knoholem.cu.rules.swrlentities.Unknown;
@@ -23,10 +24,10 @@ import java.util.*;
 public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
 
     private final OntologyContext context;
-    private final OntologySWRLConverterConfiguration configuration;
+    private final SWRLConverterConfiguration configuration;
     private final Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations;
 
-    public OWLBinding(OntologyContext context, OntologySWRLConverterConfiguration configuration,
+    public OWLBinding(OntologyContext context, SWRLConverterConfiguration configuration,
                       Function<SensitivityAnalysisRule, Set<OWLAnnotation>> ruleAnnotations) {
         this.context = context;
         this.configuration = configuration;
@@ -114,7 +115,7 @@ public class OWLBinding implements Function<SensitivityAnalysisRule, SWRLRule> {
     }
 
     private SWRLDArgument getLiteralArgument(String propertyName, String value) {
-        if (propertyName.equals(OntologySWRLConverterConfiguration.HAS_BINARY_VALUE)) {
+        if (propertyName.equals(SWRLConverterConfiguration.HAS_BINARY_VALUE)) {
             return getBooleanLiteral(value);
         } else {
             return getDoubleLiteral(value);

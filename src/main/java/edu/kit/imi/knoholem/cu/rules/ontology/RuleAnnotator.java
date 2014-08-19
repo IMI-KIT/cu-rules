@@ -83,7 +83,7 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
     private String getSuggestionText(SensitivityAnalysisRule rule) {
         Predicate predicate = rule.getConsequent().iterator().next();
         String individualName = predicate.getLeftOperand().asString();
-        if (configuration.isToggable(individualName)) {
+        if (configuration.isToggable(predicate)) {
             String toggleValue = predicate.getRightOperand().asDouble() == 0d ? "off" : "on";
             return "Switch \"" + individualName + "\" " + toggleValue + ".";
         } else {

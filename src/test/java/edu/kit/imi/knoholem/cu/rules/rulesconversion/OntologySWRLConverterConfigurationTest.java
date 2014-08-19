@@ -28,7 +28,7 @@ public class OntologySWRLConverterConfigurationTest {
 
     @Test
     public void testToggableSensors() {
-        String actualValueProperty = configuration.sensorValueProperty(ToggableSensors.OpeningSensor.name());
+        String actualValueProperty = configuration.sensorValueProperty(ToggableActuators.OpeningSensor.name());
         Assert.assertEquals(actualValueProperty, "hasBinaryValue");
     }
 }

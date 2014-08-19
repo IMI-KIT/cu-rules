@@ -32,8 +32,11 @@ public class IndividualInClassTest {
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX ontology: <http://www.semanticweb.org/ontologies/2012/9/knoholem.owl#>\n\n" +
-                "ASK { ontology:OWLIndividual a ontology:OWLClass }";
+                "PREFIX ontology: <http://www.semanticweb.org/ontologies/2012/9/knoholem.owl#>\n" +
+                "\n" +
+                "ASK WHERE {\n" +
+                "  { ontology:OWLIndividual a ontology:OWLClass }\n" +
+                "}";
 
         Assert.assertEquals(expected, iic.asAskQuery(ontologyContext));
     }

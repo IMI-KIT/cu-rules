@@ -10,13 +10,16 @@ import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.RuleConverter;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.ToggableActuators;
 import edu.kit.imi.knoholem.cu.rules.swrlentities.ClassAtom;
 import edu.kit.imi.knoholem.cu.rules.swrlentities.Individual;
+import edu.kit.imi.knoholem.cu.rules.swrlentities.PropertyAtom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -80,6 +83,11 @@ public class DataQuality {
             Individual individual = (Individual) atom.getOperand();
             String className = atom.getAtomName();
             result.add(new IndividualInClass(className, individual.getIndividualName(), templates));
+        }
+
+        for (PropertyAtom atom : ruleQuery.getQualifiedPropertyAtomsInAntecedent(OntologySWRLConverterConfiguration.HAS_BINARY_VALUE, rule)) {
+            Individual individual = (Individual) atom.getLeftOperand();
+            result.add(new IndividualInClass(ToggableActuators.names(), individual.getIndividualName(), templates));
         }
 
         return result;
@@ -148,7 +156,7 @@ public class DataQuality {
         }
 
         public void report(IndividualInClass individualInClass) {
-            printStream.println("Individual '" + individualInClass.getIndividualName() + "' is not in '" + individualInClass.getClassName() + "'.");
+            printStream.println("Individual '" + individualInClass.getIndividualName() + "' is not in '" + new ArrayList<String>(individualInClass.getClassNames()) + "'.");
         }
 
         public void report(DeclaredIndividual declaredIndividual) {

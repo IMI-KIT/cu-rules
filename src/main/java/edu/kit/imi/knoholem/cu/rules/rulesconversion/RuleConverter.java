@@ -10,7 +10,7 @@ public class RuleConverter implements Function<SensitivityAnalysisRule, SWRLRule
 
     private final SWRLConverter converter;
 
-    public RuleConverter(SWRLConverterConfiguration configuration) {
+    public RuleConverter(OntologySWRLConverterConfiguration configuration) {
         this.converter = new SWRLConverter(configuration);
     }
 

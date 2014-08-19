@@ -10,7 +10,6 @@ import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessor;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessorResponse;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverter;
-import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLRule;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
@@ -175,7 +174,7 @@ public class ConvertRules {
          * @param converterConfiguration the SWRL converter configuration to use.
          * @param failCapacity           maximal numbers of errors to buffer.
          */
-        ConvertPrint(SWRLConverterConfiguration converterConfiguration, int failCapacity, PrintStream stream) {
+        ConvertPrint(OntologySWRLConverterConfiguration converterConfiguration, int failCapacity, PrintStream stream) {
             this.ruleCount = 0;
             this.failCount = 0;
 

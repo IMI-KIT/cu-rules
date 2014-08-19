@@ -19,14 +19,13 @@ import java.nio.file.Paths;
 public class DataQualityProcessorTest {
 
     private static Templates templates;
-    private static OntologyContext ontologyContext;
     private static DataQualityEvaluationContext processor;
 
     @BeforeClass
     public static void setup() throws URISyntaxException, OWLOntologyCreationException, MalformedURLException, FileNotFoundException {
         URL resourceURL = DataQualityProcessorTest.class.getResource("/ontology.n3");
         Path path = Paths.get(resourceURL.toURI());
-        ontologyContext = OntologyContext.load(path.toFile());
+        OntologyContext ontologyContext = OntologyContext.load(path.toFile());
         templates = Templates.loadTemplates();
         processor = new DataQualityEvaluationContext(ontologyContext);
     }

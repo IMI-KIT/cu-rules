@@ -5,7 +5,15 @@ import "prefixes.stg"
 individualInClass(prefix, namespace, className, individualName) ::= <<
 $prefixes(prefix, namespace)$
 
-ASK { $prefix$:$individualName$ a $prefix$:$className$ }
+ASK { $type_of_triple(prefix, individualName, className)$ }
+>>
+
+individualInClasses(prefix, namespace, classes, individualName) ::= <<
+$prefixes(prefix, namespace)$
+
+ASK WHERE {
+  $classes:{class | { $type_of_triple(prefix, individualName, class)$ \}}; separator=" UNION\n"$
+}
 >>
 
 declared_individual(prefix, namespace, className, individualName) ::= <<
@@ -13,3 +21,5 @@ $prefixes(prefix, namespace)$
 
 ASK { $prefix$:$individualName$ a owl:NamedIndividual }
 >>
+
+type_of_triple(prefix, individualName, className) ::= "$prefix$:$individualName$ a $prefix$:$className$"

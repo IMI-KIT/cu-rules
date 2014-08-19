@@ -3,17 +3,26 @@ package edu.kit.imi.knoholem.cu.rules.dataquality;
 import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
 import org.stringtemplate.v4.ST;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
 public class IndividualInClass implements Criterion {
 
-    private final String className;
+    private final Set<String> classNames;
     private final String individualName;
     private final Templates templates;
 
     public IndividualInClass(String className, String individualName, Templates templates) {
-        this.className = className;
+        this.classNames = Collections.singleton(className);
+        this.individualName = individualName;
+        this.templates = templates;
+    }
+
+    public IndividualInClass(Set<String> classNames, String individualName, Templates templates) {
+        this.classNames = classNames;
         this.individualName = individualName;
         this.templates = templates;
     }
@@ -22,46 +31,19 @@ public class IndividualInClass implements Criterion {
         return individualName;
     }
 
-    public String getClassName() {
-        return className;
+    public Set<String> getClassNames() {
+        return Collections.unmodifiableSet(classNames);
     }
 
     @Override
     public String asAskQuery(OntologyContext ontologyContext) {
-        ST individualInClassQuery = templates.getTemplate("individualInClass");
+        ST individualInClassQuery = templates.getTemplate("individualInClasses");
         individualInClassQuery.add("prefix", "ontology");
         individualInClassQuery.add("namespace", ontologyContext.getOntologyNamespace());
-        individualInClassQuery.add("className", className);
+        individualInClassQuery.add("classes", classNames);
         individualInClassQuery.add("individualName", individualName);
 
         return individualInClassQuery.render();
     }
 
-    @Override
-    public String toString() {
-        return "IndividualInClass{" +
-                "className='" + className + '\'' +
-                ", individualName='" + individualName + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IndividualInClass that = (IndividualInClass) o;
-
-        if (!className.equals(that.className)) return false;
-        if (!individualName.equals(that.individualName)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = className.hashCode();
-        result = 31 * result + individualName.hashCode();
-        return result;
-    }
 }

@@ -8,8 +8,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
  */
-enum ToggableSensors {
-    OccupancySensor,
+public enum ToggableActuators {
     OpeningSensor,
 
     LightingSetPoint,
@@ -19,7 +18,7 @@ enum ToggableSensors {
     public static Set<String> names() {
         Set<String> names = new HashSet<String>();
 
-        for (ToggableSensors value : ToggableSensors.values()) {
+        for (ToggableActuators value : ToggableActuators.values()) {
             names.add(value.name());
         }
 
