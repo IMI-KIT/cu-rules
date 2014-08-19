@@ -13,7 +13,7 @@ public class RuleLiteralTest {
 
     @Before
     public void setUp() {
-        String ruleLiteral = "IF ZoneID= RC0.13ATRMGRND ^ Weight= 0.00 ^ Type= Tot_Cool_Reduc ^ Reduction= 5.00% ^ Month= 7.00 ^ Day= 1.00 ^ Hour= 8.00 ^ 6>= 14.31 ^ 6<= 15.04 THEN Temperature_Set= 16.09";
+        String ruleLiteral = "IF ZoneID= RC0.13ATRMGRND ^ Weight= 0.00 ^ Type= Tot_Cool_Reduc ^ Reduction= 5.00% ^ 6>= 14.31 ^ 6<= 15.04 THEN Temperature_Set= 16.09";
         this.ruleLiteral = new RuleLiteral(ruleLiteral, RuleParserConfiguration.getDefaultConfiguration());
     }
 
@@ -45,22 +45,6 @@ public class RuleLiteralTest {
     @Test
     public void testReduction() {
         Assert.assertEquals("Reduction= 5.00%", ruleLiteral.getReductionAtom());
-    }
-
-    @Test
-    public void testMonth() {
-        Assert.assertEquals("Month= 7.00", ruleLiteral.getMonthAtom());
-
-    }
-
-    @Test
-    public void testDay() {
-        Assert.assertEquals("Day= 1.00", ruleLiteral.getDayAtom());
-    }
-
-    @Test
-    public void testHour() {
-        Assert.assertEquals("Hour= 8.00", ruleLiteral.getHourAtom());
     }
 
 }

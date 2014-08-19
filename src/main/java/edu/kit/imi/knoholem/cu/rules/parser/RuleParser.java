@@ -4,7 +4,6 @@ import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
 import edu.kit.imi.knoholem.cu.rules.atoms.RuleMetadata;
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,8 +35,7 @@ public class RuleParser {
         double weight = parseRuleWeight(ruleLiteral);
         double reduction = parseReductionRate(ruleLiteral);
         String type = parseRuleType(ruleLiteral);
-        Calendar date = parseRuleDate(ruleLiteral);
-        return new RuleMetadata(zoneId, date, type, weight, reduction);
+        return new RuleMetadata(zoneId, type, weight, reduction);
     }
 
     private String parseZoneId(RuleLiteral ruleLiteral) {
@@ -56,17 +54,6 @@ public class RuleParser {
 
     private String parseRuleType(RuleLiteral ruleLiteral) {
         return parsePredicate(ruleLiteral.getRuleTypeAtom()).getRightOperand().asString();
-    }
-
-    private Calendar parseRuleDate(RuleLiteral ruleLiteral) {
-        Calendar calendar = Calendar.getInstance();
-        int day = parsePredicate(ruleLiteral.getDayAtom()).getRightOperand().asInteger();
-        int month = parsePredicate(ruleLiteral.getMonthAtom()).getRightOperand().asInteger();
-        int hour = parsePredicate(ruleLiteral.getHourAtom()).getRightOperand().asInteger();
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.MONTH, month - 1);
-        calendar.set(Calendar.HOUR, hour);
-        return calendar;
     }
 
     private List<Predicate> collectPredicates(List<String> ruleBodyTokens) {

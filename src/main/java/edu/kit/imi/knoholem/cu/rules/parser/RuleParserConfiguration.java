@@ -18,12 +18,6 @@ public abstract class RuleParserConfiguration {
 
     public abstract int reductionIndex();
 
-    public abstract int monthIndex();
-
-    public abstract int dayIndex();
-
-    public abstract int hourIndex();
-
     public abstract String andLiteral();
 
     public abstract String ifLiteral();
@@ -35,7 +29,7 @@ public abstract class RuleParserConfiguration {
     }
 
     public List<Integer> metadataFields() {
-        List<Integer> fieldsList = Arrays.asList(zoneIdIndex(), weightIndex(), typeIndex(), reductionIndex(), monthIndex(), dayIndex(), hourIndex());
+        List<Integer> fieldsList = Arrays.asList(zoneIdIndex(), weightIndex(), typeIndex(), reductionIndex());
         List<Integer> nonNegativeIndices = nonNegativeIntegers(fieldsList);
         return Collections.unmodifiableList(nonNegativeIndices);
     }

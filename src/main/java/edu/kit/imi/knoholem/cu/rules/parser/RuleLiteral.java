@@ -61,18 +61,6 @@ class RuleLiteral {
         return getMetadataToken(configuration.zoneIdIndex());
     }
 
-    public String getMonthAtom() {
-        return getMetadataToken(configuration.monthIndex());
-    }
-
-    public String getDayAtom() {
-        return getMetadataToken(configuration.dayIndex());
-    }
-
-    public String getHourAtom() {
-        return getMetadataToken(configuration.hourIndex());
-    }
-
     public String getReductionAtom() {
         return getMetadataToken(configuration.reductionIndex());
     }

@@ -100,21 +100,6 @@ class DynamicRuleParserConfiguration extends RuleParserConfiguration {
     }
 
     @Override
-    public int monthIndex() {
-        return antecedentWithPrefix(configuration.getProperty("month"));
-    }
-
-    @Override
-    public int dayIndex() {
-        return antecedentWithPrefix(configuration.getProperty("day"));
-    }
-
-    @Override
-    public int hourIndex() {
-        return antecedentWithPrefix(configuration.getProperty("hour"));
-    }
-
-    @Override
     public String andLiteral() {
         return andLiteral;
     }

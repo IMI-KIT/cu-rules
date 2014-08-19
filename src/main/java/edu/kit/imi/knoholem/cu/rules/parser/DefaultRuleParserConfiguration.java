@@ -23,21 +23,6 @@ class DefaultRuleParserConfiguration extends RuleParserConfiguration {
     }
 
     @Override
-    public int monthIndex() {
-        return 4;
-    }
-
-    @Override
-    public int dayIndex() {
-        return 5;
-    }
-
-    @Override
-    public int hourIndex() {
-        return 6;
-    }
-
-    @Override
     public String andLiteral() {
         return "\\^";
     }
