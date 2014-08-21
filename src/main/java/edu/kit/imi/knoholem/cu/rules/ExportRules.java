@@ -11,6 +11,7 @@ import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.ClassifiedEntities
 import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.KnownEntities;
 import edu.kit.imi.knoholem.cu.rules.ontology.rulesprocessing.RuleExporter;
 import edu.kit.imi.knoholem.cu.rules.rulesconversion.OntologySWRLConverterConfiguration;
+import edu.kit.imi.knoholem.cu.rules.rulesconversion.SWRLConverterConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.SWRLRule;
@@ -81,12 +82,38 @@ public class ExportRules {
     /**
      * Returns a collection of SWRL rules.
      *
-     * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL rules.
+     * <p>
+     *     Uses the default ontology configuration and rule annotator.
+     * </p>
+     * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL.
      */
     public Monad<SWRLRule> getSWRLRules() {
         OntologySWRLConverterConfiguration configuration = new OntologySWRLConverterConfiguration(ontology);
         RuleAnnotator annotator = new RuleAnnotator(ontology);
-        OWLBinding owlBinding = new OWLBinding(ontology, configuration, annotator);
+
+        return getSWRLRules(configuration, annotator);
+    }
+
+    /**
+     * Returns a collection of SWRL rules.
+     *
+     * @param ruleAnnotator the rule annotator to use.
+     * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL.
+     */
+    public Monad<SWRLRule> getSWRLRules(RuleAnnotator ruleAnnotator) {
+        return getSWRLRules(new OntologySWRLConverterConfiguration(ontology), ruleAnnotator);
+    }
+
+    /**
+     * Returns a collection of SWRL rules.
+     *
+     * @param configuration the conversion configuration to use.
+     * @param ruleAnnotator the rule annotator to use.
+     *
+     * @return the rules returned by {@link #getSensitivityAnalysisRules()} converted in SWRL.
+     */
+    public Monad<SWRLRule> getSWRLRules(SWRLConverterConfiguration configuration, RuleAnnotator ruleAnnotator) {
+        OWLBinding owlBinding = new OWLBinding(ontology, configuration, ruleAnnotator);
 
         return getSensitivityAnalysisRules().map(owlBinding);
     }
