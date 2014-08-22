@@ -46,41 +46,7 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         return ruleCounter;
     }
 
-    private OWLAnnotation ruleIDAnnotation(int ruleId) {
-        return ontology.getFactory().getOWLAnnotation(
-                ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
-                ontology.getFactory().getOWLLiteral(createRuleId(ruleId)));
-    }
-
-    String createRuleId(int ruleId) {
-        return "#RULEID" + String.format("%06d", ruleId);
-    }
-
-    private OWLAnnotation ruleReductionAnnotation(Float reductionRate) {
-        return ontology.getFactory().getOWLAnnotation(
-                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasReduction")),
-                ontology.getFactory().getOWLLiteral(reductionRate));
-    }
-
-    private OWLAnnotation ruleTypeAnnotation(String ruleType) {
-        return ontology.getFactory().getOWLAnnotation(
-                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasRuleType")),
-                ontology.getFactory().getOWLLiteral(ruleType));
-    }
-
-    private OWLAnnotation ruleSuggestionAnnotation(String suggestionText) {
-        return ontology.getFactory().getOWLAnnotation(
-                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasSuggestion")),
-                ontology.getFactory().getOWLLiteral(suggestionText));
-    }
-
-    private OWLAnnotation ruleWeightAnnotation(double weight) {
-        return ontology.getFactory().getOWLAnnotation(
-                ontology.getFactory().getOWLAnnotationProperty(ontology.iri("hasWeight")),
-                ontology.getFactory().getOWLLiteral(weight));
-    }
-
-    private String getSuggestionText(SensitivityAnalysisRule rule) {
+    protected String getSuggestionText(SensitivityAnalysisRule rule) {
         Predicate predicate = rule.getConsequent().iterator().next();
         String individualName = predicate.getLeftOperand().asString();
         if (configuration.isToggable(predicate)) {
@@ -89,5 +55,55 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         } else {
             return "Set \"" + individualName + "\" to \"" + predicate.getRightOperand().asString() + "\".";
         }
+    }
+
+    protected String createRuleId(int ruleId) {
+        return "#RULEID" + String.format("%06d", ruleId);
+    }
+
+    protected String suggestionPropertyName() {
+        return "hasSuggestion";
+    }
+
+    protected String reductionPropertyName() {
+        return "hasReduction";
+    }
+
+    protected String weightPropertyName() {
+        return "hasWeight";
+    }
+
+    private String ruleTypePropertyName() {
+        return "hasRuleType";
+    }
+
+    private OWLAnnotation ruleIDAnnotation(int ruleId) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+                ontology.getFactory().getOWLLiteral(createRuleId(ruleId)));
+    }
+
+    private OWLAnnotation ruleReductionAnnotation(Float reductionRate) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri(reductionPropertyName())),
+                ontology.getFactory().getOWLLiteral(reductionRate));
+    }
+
+    private OWLAnnotation ruleTypeAnnotation(String ruleType) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri(ruleTypePropertyName())),
+                ontology.getFactory().getOWLLiteral(ruleType));
+    }
+
+    private OWLAnnotation ruleSuggestionAnnotation(String suggestionText) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri(suggestionPropertyName())),
+                ontology.getFactory().getOWLLiteral(suggestionText));
+    }
+
+    private OWLAnnotation ruleWeightAnnotation(double weight) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri(weightPropertyName())),
+                ontology.getFactory().getOWLLiteral(weight));
     }
 }
