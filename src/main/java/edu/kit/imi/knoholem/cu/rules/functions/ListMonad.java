@@ -115,4 +115,8 @@ class ListMonad<T> implements Monad<T> {
         return elements.isEmpty();
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return elements.iterator();
+    }
 }
