@@ -32,14 +32,21 @@ public class RulePrinter implements Function<SensitivityAnalysisRule, String> {
     public String ruleLiteral(SensitivityAnalysisRule rule) {
         String connective = " " + configuration.andLiteral() + " ";
 
+        return configuration.ifLiteral()
+                + " " + joinTokens(antecedentLiterals(rule), connective)
+                + " " + configuration.thenLiteral() + " "
+                + joinTokens(consequentLiterals(rule), connective);
+    }
+
+    protected List<String> antecedentLiterals(SensitivityAnalysisRule rule) {
         List<String> antecedentLiterals = new ArrayList<String>();
         antecedentLiterals.addAll(metadataTokens(rule));
         antecedentLiterals.addAll(atomTokens(rule.getAntecedent()));
+        return antecedentLiterals;
+    }
 
-        return configuration.ifLiteral()
-                + " " + joinTokens(antecedentLiterals, connective)
-                + " " + configuration.thenLiteral() + " "
-                + joinTokens(atomTokens(rule.getConsequent()), connective);
+    protected List<String> consequentLiterals(SensitivityAnalysisRule rule) {
+        return atomTokens(rule.getConsequent());
     }
 
     protected List<String> metadataTokens(SensitivityAnalysisRule rule) {
