@@ -23,7 +23,32 @@ class DefaultRuleParserConfiguration extends RuleParserConfiguration {
     }
 
     @Override
+    public String zoneIdLiteral() {
+        return "ZoneID";
+    }
+
+    @Override
+    public String weightLiteral() {
+        return "Weight";
+    }
+
+    @Override
+    public String typeLiteral() {
+        return "Type";
+    }
+
+    @Override
+    public String reductionIndexLiteral() {
+        return "Reduction";
+    }
+
+    @Override
     public String andLiteral() {
+        return "^";
+    }
+
+    @Override
+    public String andLiteralPattern() {
         return "\\^";
     }
 

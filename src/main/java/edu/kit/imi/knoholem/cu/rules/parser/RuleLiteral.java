@@ -100,7 +100,7 @@ class RuleLiteral {
      * @return a list of tokens representing the rule atoms.
      */
     private List<String> ruleBodyTokens(String ruleBody) {
-        return trimItems(Arrays.asList(ruleBody.split(configuration.andLiteral())));
+        return trimItems(Arrays.asList(ruleBody.split(configuration.andLiteralPattern())));
     }
 
     /**

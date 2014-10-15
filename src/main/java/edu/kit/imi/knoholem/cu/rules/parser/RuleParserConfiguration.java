@@ -18,7 +18,17 @@ public abstract class RuleParserConfiguration {
 
     public abstract int reductionIndex();
 
+    public abstract String zoneIdLiteral();
+
+    public abstract String weightLiteral();
+
+    public abstract String typeLiteral();
+
+    public abstract String reductionIndexLiteral();
+
     public abstract String andLiteral();
+
+    public abstract String andLiteralPattern();
 
     public abstract String ifLiteral();
 
