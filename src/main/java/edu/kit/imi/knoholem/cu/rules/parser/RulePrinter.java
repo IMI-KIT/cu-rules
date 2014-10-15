@@ -4,6 +4,7 @@ import edu.kit.imi.knoholem.cu.rules.atoms.Operator;
 import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
 import edu.kit.imi.knoholem.cu.rules.atoms.RuleMetadata;
 import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
+import edu.kit.imi.knoholem.cu.rules.functions.Function;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  */
-public class RulePrinter {
+public class RulePrinter implements Function<SensitivityAnalysisRule, String> {
 
     private final RuleParserConfiguration configuration;
     private final NumberFormat numberFormat;
@@ -21,6 +22,11 @@ public class RulePrinter {
     public RulePrinter(RuleParserConfiguration configuration, NumberFormat numberFormat) {
         this.configuration = configuration;
         this.numberFormat = numberFormat;
+    }
+
+    @Override
+    public String apply(SensitivityAnalysisRule input) {
+        return ruleLiteral(input);
     }
 
     public String ruleLiteral(SensitivityAnalysisRule rule) {
