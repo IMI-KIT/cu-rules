@@ -30,6 +30,19 @@ public class RuleParser {
         }
     }
 
+    protected List<Predicate> collectPredicates(List<String> ruleBodyTokens) {
+        List<Predicate> predicates = new LinkedList<Predicate>();
+        for (String token : ruleBodyTokens) {
+            predicates.add(parsePredicate(token));
+        }
+        return predicates;
+    }
+
+    protected Predicate parsePredicate(String predicateLiteral) {
+        PredicateParser parser = new PredicateParser(predicateLiteral);
+        return new Predicate(parser.getLeftLiteral(), parser.getOperator(), parser.getRightLiteral());
+    }
+
     private RuleMetadata parseRuleMetadata(RuleLiteral ruleLiteral) {
         String zoneId = parseZoneId(ruleLiteral);
         double weight = parseRuleWeight(ruleLiteral);
@@ -56,24 +69,10 @@ public class RuleParser {
         return parsePredicate(ruleLiteral.getRuleTypeAtom()).getRightOperand().asString();
     }
 
-    private List<Predicate> collectPredicates(List<String> ruleBodyTokens) {
-        List<Predicate> predicates = new LinkedList<Predicate>();
-        for (String token : ruleBodyTokens) {
-            predicates.add(parsePredicate(token));
-        }
-        return predicates;
-    }
-
-    private Predicate parsePredicate(String predicateLiteral) {
-        PredicateParser parser = new PredicateParser(predicateLiteral);
-        return new Predicate(parser.getLeftLiteral(), parser.getOperator(), parser.getRightLiteral());
-    }
-
     private String removePercentSign(String originalValue) {
         if (originalValue.charAt(originalValue.length() - 1) == '%') {
             return originalValue.substring(0, originalValue.length() - 1);
         }
         return originalValue;
     }
-
 }

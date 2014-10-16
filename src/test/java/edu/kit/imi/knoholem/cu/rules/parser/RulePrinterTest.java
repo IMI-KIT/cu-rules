@@ -45,7 +45,7 @@ public class RulePrinterTest {
     }
 
     @Test
-    public void testPrint() {
+    public void testPrintRuleLiteral() {
         Assert.assertEquals(ruleLiteral, rulePrinter.ruleLiteral(rule));
     }
 }

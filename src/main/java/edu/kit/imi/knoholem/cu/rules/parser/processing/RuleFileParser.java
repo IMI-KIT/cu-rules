@@ -14,7 +14,7 @@ import java.io.*;
 public class RuleFileParser {
 
     private final File file;
-    private final RuleParserConfiguration parserConfiguration;
+    private final RuleParser ruleParser;
 
     /**
      * Default constructor.
@@ -24,7 +24,12 @@ public class RuleFileParser {
      */
     public RuleFileParser(File file, RuleParserConfiguration parserConfiguration) {
         this.file = file;
-        this.parserConfiguration = parserConfiguration;
+        this.ruleParser = new RuleParser(parserConfiguration);
+    }
+
+    public RuleFileParser(File file, RuleParser ruleParser) {
+        this.file = file;
+        this.ruleParser = ruleParser;
     }
 
     /**
@@ -40,9 +45,8 @@ public class RuleFileParser {
         {
             RuleProcessorResponse response = RuleProcessorResponse.OK;
             for (String ruleLiteral = reader.readLine(); ruleLiteral != null && response.canContinue(); ruleLiteral = reader.readLine()) {
-                RuleParser parser = new RuleParser(parserConfiguration);
                 try {
-                    response = ruleProcessor.onParse(parser.parseRule(ruleLiteral));
+                    response = ruleProcessor.onParse(ruleParser.parseRule(ruleLiteral));
                 } catch (RuleParseError error) {
                     response = ruleProcessor.onError(new RuleFileParserError(file, error));
                 }

@@ -4,6 +4,7 @@ import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Collect;
 import edu.kit.imi.knoholem.cu.rules.ontology.OntologyContext;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParseError;
+import edu.kit.imi.knoholem.cu.rules.parser.RuleParser;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleFileParser;
 import edu.kit.imi.knoholem.cu.rules.parser.processing.RuleProcessor;
@@ -82,9 +83,13 @@ public class ConvertRules {
          * @throws IOException in case of a read failure.
          */
         public void process(RuleParserConfiguration configuration, RuleProcessor processor) throws IOException {
+            process(new RuleParser(configuration), processor);
+        }
+
+        public void process(RuleParser ruleParser, RuleProcessor processor) throws IOException {
             for (File file : ruleFiles) {
                 System.err.println("Parsing rules in " + file.getName());
-                RuleFileParser parser = new RuleFileParser(file, configuration);
+                RuleFileParser parser = new RuleFileParser(file, ruleParser);
                 try {
                     parser.process(processor);
                 } catch (FileNotFoundException e) {
@@ -101,7 +106,7 @@ public class ConvertRules {
     static class MultipleRuleFileParser {
 
         private final List<String> ruleFiles;
-        private final RuleParserConfiguration configuration;
+        private final RuleParser ruleParser;
         private final int rulesCap;
         private final int errorsCap;
 
@@ -111,7 +116,11 @@ public class ConvertRules {
          * @param ruleFiles paths to the files to parse.
          */
         MultipleRuleFileParser(List<String> ruleFiles) {
-            this(-1, -1, RuleParserConfiguration.getDefaultConfiguration(), ruleFiles);
+            this(-1, -1, new RuleParser(RuleParserConfiguration.getDefaultConfiguration()), ruleFiles);
+        }
+
+        MultipleRuleFileParser(List<String> ruleFiles, RuleParser ruleParser) {
+            this(-1, -1, ruleParser, ruleFiles);
         }
 
         /**
@@ -121,22 +130,22 @@ public class ConvertRules {
          * @param ruleFiles     paths to the files to parse.
          */
         MultipleRuleFileParser(RuleParserConfiguration configuration, List<String> ruleFiles) {
-            this(-1, -1, configuration, ruleFiles);
+            this(-1, -1, new RuleParser(configuration), ruleFiles);
         }
 
         /**
          * Instantiates a parser that collects a limited number of encountered rules with a parser configuration.
          *
-         * @param rulesCap      the maximum number of rules to collect. A negative number collects all encountered rules.
-         * @param errorsCap     the maximum number of errors to buffer. A negative number collects all encountered errors.
-         * @param configuration rule parser configuration.
-         * @param ruleFiles     paths to the files to parse.
+         * @param rulesCap   the maximum number of rules to collect. A negative number collects all encountered rules.
+         * @param errorsCap  the maximum number of errors to buffer. A negative number collects all encountered errors.
+         * @param ruleParser rule parser.
+         * @param ruleFiles  paths to the files to parse.
          */
-        MultipleRuleFileParser(int rulesCap, int errorsCap, RuleParserConfiguration configuration, List<String> ruleFiles) {
+        MultipleRuleFileParser(int rulesCap, int errorsCap, RuleParser ruleParser, List<String> ruleFiles) {
             this.rulesCap = rulesCap;
             this.errorsCap = errorsCap;
 
-            this.configuration = configuration;
+            this.ruleParser = ruleParser;
             this.ruleFiles = ruleFiles;
         }
 
@@ -148,10 +157,9 @@ public class ConvertRules {
          */
         public Collect execute() throws IOException {
             Collect processor = new Collect(rulesCap, errorsCap);
-            new Minigun(ruleFiles).process(configuration, processor);
+            new Minigun(ruleFiles).process(ruleParser, processor);
             return processor;
         }
-
     }
 
     /**
