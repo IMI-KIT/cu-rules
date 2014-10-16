@@ -1,11 +1,10 @@
 package edu.kit.imi.knoholem.cu.rules;
 
 import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Collect;
 import edu.kit.imi.knoholem.cu.rules.functions.Monad;
-import edu.kit.imi.knoholem.cu.rules.parser.RuleParser;
-import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
-import edu.kit.imi.knoholem.cu.rules.parser.RulePrinter;
+import edu.kit.imi.knoholem.cu.rules.parser.*;
 
 import java.io.IOException;
 import java.sql.*;
@@ -145,6 +144,21 @@ public class AlignRules {
         private AlignedRuleParser(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase) {
             super(configuration);
             this.sensorsInDatabase = sensorsInDatabase;
+        }
+
+        public SensitivityAnalysisRule parseRule(String ruleLiteral) {
+            try {
+                RuleLiteral parsedLiteral = new RuleLiteral(ruleLiteral, configuration);
+
+                SensitivityAnalysisRule rule = new SensitivityAnalysisRule();
+                rule.setAntecedent(collectPredicates(parsedLiteral.getAntecedentAtoms()));
+                rule.setConsequent(super.collectPredicates(parsedLiteral.getConsequentAtoms()));
+                rule.setMetadata(parseRuleMetadata(parsedLiteral));
+
+                return rule;
+            } catch (Throwable t) {
+                throw new RuleParseError(ruleLiteral, t);
+            }
         }
 
         @Override

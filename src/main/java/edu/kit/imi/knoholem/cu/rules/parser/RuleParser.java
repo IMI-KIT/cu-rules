@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RuleParser {
 
-    private final RuleParserConfiguration configuration;
+    protected final RuleParserConfiguration configuration;
 
     public RuleParser(RuleParserConfiguration configuration) {
         this.configuration = configuration;
@@ -43,7 +43,7 @@ public class RuleParser {
         return new Predicate(parser.getLeftLiteral(), parser.getOperator(), parser.getRightLiteral());
     }
 
-    private RuleMetadata parseRuleMetadata(RuleLiteral ruleLiteral) {
+    protected RuleMetadata parseRuleMetadata(RuleLiteral ruleLiteral) {
         String zoneId = parseZoneId(ruleLiteral);
         double weight = parseRuleWeight(ruleLiteral);
         double reduction = parseReductionRate(ruleLiteral);
