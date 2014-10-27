@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  */
-public class SensorTypes {
+public class DatabaseSensors {
 
     public static void main(String[] args) {
         String ontology = args[0];
@@ -29,6 +29,7 @@ public class SensorTypes {
         try {
             ontologyContext = OntologyContext.load(new File(ontology));
         } catch (OWLOntologyCreationException e) {
+            System.err.println("Couldn't load the ontology in `" + ontology + "'. Reason: " + e.getMessage());
             System.exit(1);
         }
 
@@ -42,6 +43,7 @@ public class SensorTypes {
             e.printStackTrace();
         } finally {
             if (connection == null) {
+                System.err.println("Could not initialize connection to `" + url + "'.");
                 System.exit(1);
             }
         }
@@ -50,7 +52,7 @@ public class SensorTypes {
         try {
             sensors = sensorsDatabase.fetchAllNames(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Could not fetch sensor identifiers from `" + url + "'. Reason: " + e.getMessage());
             System.exit(1);
         }
 

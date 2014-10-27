@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -85,6 +86,16 @@ public class OntologyContext {
         return factory;
     }
 
+    public Set<String> individuals() {
+        Set<String> individualShortNames = new HashSet<String>();
+
+        for (OWLNamedIndividual individual : ontology.getIndividualsInSignature()) {
+            individualShortNames.add(individual.getIRI().getFragment());
+        }
+
+        return individualShortNames;
+    }
+
     public boolean containsIndividual(String name) {
         IRI individualIRI = IRI.create(ontologyIRI.toString(), resource(name));
         return ontology.containsIndividualInSignature(individualIRI);
@@ -93,13 +104,13 @@ public class OntologyContext {
     /**
      * Returns the first class in the declaration of an individual.
      *
-     * @param individualName <em>short</em> individual name. Not null.
+     * @param shortName <em>short</em> individual name. Must not be <code>null</code>.
      * @return <code>null</code>, if the individual could not be found in the ontology signature, or no types declared.
      * Else the short class name.
      */
-    public String getRepresentativeClass(String individualName) {
-        if (containsIndividual(individualName)) {
-            Set<OWLClass> classes = reasoner.getTypes(factory.getOWLNamedIndividual(iri(individualName)), true).getFlattened();
+    public String getRepresentativeClass(String shortName) {
+        if (containsIndividual(shortName)) {
+            Set<OWLClass> classes = reasoner.getTypes(factory.getOWLNamedIndividual(iri(shortName)), true).getFlattened();
             if (classes.isEmpty()) {
                 return null;
             } else {
