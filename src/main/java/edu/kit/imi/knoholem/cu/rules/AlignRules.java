@@ -22,15 +22,18 @@ public class AlignRules {
         String user = args[1];
         String password = args[2];
 
-        String sensorsTable = args[3];
-        String setpointsTable = args[4];
+        String sensorsHistoryTable = args[3];
+        String setpointsHistoryTable = args[4];
 
-        String sensorColumn = args[5];
-        String setpointColumn = args[6];
+        String sensorsTable = args[5];
+        String setpointsTable = args[6];
 
-        List<String> files = Arrays.asList(args).subList(7, args.length);
+        String sensorColumn = args[7];
+        String setpointColumn = args[8];
+
+        List<String> files = Arrays.asList(args).subList(9, args.length);
         RuleParserConfiguration ruleParserConfiguration = RuleParserConfiguration.getDefaultConfiguration();
-        SensorsDatabase alignRules = new SensorsDatabase(url, user, password, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
+        SensorsDatabase alignRules = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
 
         Connection connection = null;
         try {
@@ -41,6 +44,7 @@ public class AlignRules {
             e.printStackTrace();
         } finally {
             if (connection == null) {
+                System.err.println("Could not initialize connection.");
                 System.exit(1);
             }
         }
@@ -49,6 +53,7 @@ public class AlignRules {
         try {
             sensorsInDatabase = alignRules.fetchAllNames(connection);
         } catch (SQLException e) {
+            System.err.println("Could not fetch rules.");
             e.printStackTrace();
             System.exit(1);
         }
@@ -76,7 +81,7 @@ public class AlignRules {
 
         private final Collection<String> sensorsInDatabase;
 
-        private AlignedRuleParser(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase) {
+        protected AlignedRuleParser(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase) {
             super(configuration);
             this.sensorsInDatabase = sensorsInDatabase;
         }

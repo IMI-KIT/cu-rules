@@ -19,11 +19,14 @@ public class DatabaseSensors {
         String user = args[2];
         String password = args[3];
 
-        String sensorsTable = args[4];
-        String setpointsTable = args[5];
+        String sensorsHistoryTable = args[4];
+        String setpointsHistoryTable = args[5];
 
-        String sensorColumn = args[6];
-        String setpointColumn = args[7];
+        String sensorsTable = args[6];
+        String setpointsTable = args[7];
+
+        String sensorColumn = args[8];
+        String setpointColumn = args[9];
 
         OntologyContext ontologyContext = null;
         try {
@@ -33,7 +36,7 @@ public class DatabaseSensors {
             System.exit(1);
         }
 
-        SensorsDatabase sensorsDatabase = new SensorsDatabase(url, user, password, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
+        SensorsDatabase sensorsDatabase = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
         Connection connection = null;
         try {
             connection = sensorsDatabase.initializeConnection();

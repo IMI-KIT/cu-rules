@@ -13,22 +13,55 @@ public class SensorsDatabase {
     protected final String user;
     protected final String password;
 
+    protected final String sensorsHistoryTable;
+    protected final String setpointsHistoryTable;
+
     protected final String sensorsTable;
     protected final String setpointsTable;
 
     protected final String sensorColumn;
     protected final String setpointColumn;
 
-    public SensorsDatabase(String url, String user, String password, String sensorsTable, String setpointsTable, String sensorColumn, String setpointColumn) {
+    public SensorsDatabase(String url, String user, String password,
+                           String sensorsHistoryTable, String setpointsHistoryTable,
+                           String sensorsTable, String setpointsTable,
+                           String sensorColumn, String setpointColumn) {
         this.url = url;
         this.user = user;
         this.password = password;
+
+        this.sensorsHistoryTable = sensorsHistoryTable;
+        this.setpointsHistoryTable = setpointsHistoryTable;
 
         this.sensorsTable = sensorsTable;
         this.setpointsTable = setpointsTable;
 
         this.sensorColumn = sensorColumn;
         this.setpointColumn = setpointColumn;
+    }
+
+    public String getSensorsTable() {
+        return sensorsTable;
+    }
+
+    public String getSetpointsTable() {
+        return setpointsTable;
+    }
+
+    public String getSensorsHistoryTable() {
+        return sensorsHistoryTable;
+    }
+
+    public String getSetpointsHistoryTable() {
+        return setpointsHistoryTable;
+    }
+
+    public String getSensorColumn() {
+        return sensorColumn;
+    }
+
+    public String getSetpointColumn() {
+        return setpointColumn;
     }
 
     public Connection initializeConnection() throws ClassNotFoundException, SQLException {
@@ -55,7 +88,7 @@ public class SensorsDatabase {
     }
 
     public Set<String> fetchSensorNames(Connection connection) throws SQLException {
-        return collectNames(connection, sensorsQuery(sensorColumn, setpointsTable));
+        return collectNames(connection, sensorsQuery(sensorColumn, sensorsTable));
     }
 
     public String sensorsQuery(String sensorColumn, String sensorsTable) {
@@ -64,6 +97,10 @@ public class SensorsDatabase {
 
     public String setpointsQuery(String setpointColumn, String setpointsTable) {
         return "SELECT DISTINCT(`" + setpointColumn + "`) FROM `" + setpointsTable + "`";
+    }
+
+    public String getValueColumn() {
+        return "value";
     }
 
     public Set<String> collectNames(Connection connection, String query) throws SQLException {
