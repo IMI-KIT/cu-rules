@@ -83,6 +83,12 @@ public class SensorsDatabase {
         return allNames;
     }
 
+    public Double fetchCurrentSensorValue(Connection connection, String sensorId) throws SQLException {
+        ResultSet resultSet = connection.prepareStatement(sensorValueQuery(sensorId)).executeQuery();
+        resultSet.next();
+        return resultSet.getDouble(1);
+    }
+
     public Set<String> fetchSetpointNames(Connection connection) throws SQLException {
         return collectNames(connection, setpointsQuery(setpointColumn, setpointsTable));
     }
@@ -97,6 +103,14 @@ public class SensorsDatabase {
 
     public String setpointsQuery(String setpointColumn, String setpointsTable) {
         return "SELECT DISTINCT(`" + setpointColumn + "`) FROM `" + setpointsTable + "`";
+    }
+
+    public String setpointValueQuery(String setpointId) {
+        return "SELECT `" + getValueColumn() + "` FROM `" + getSetpointsTable() + "` WHERE `" + setpointColumn + "` = '" + setpointId + "' LIMIT 1";
+    }
+
+    public String sensorValueQuery(String sensorId) {
+        return "SELECT `" + getValueColumn() + "` FROM `" + getSensorsTable() + "` WHERE `" + sensorColumn + "` = '" + sensorId + "' LIMIT 1";
     }
 
     public String getValueColumn() {
