@@ -61,7 +61,7 @@ public class EvaluateRules {
         System.err.println("Fetched " + sensorsInDatabase.size() + " sensors.");
 
         BuildingState buildingState = new BuildingState(sensorDatabase);
-        EvaluatingParser ruleParser = new EvaluatingParser(ruleParserConfiguration, sensorsInDatabase, buildingState);
+        FailingPredicatesRecorder ruleParser = new FailingPredicatesRecorder(ruleParserConfiguration, sensorsInDatabase, buildingState);
         try {
             Collect collector = new ConvertRules.MultipleRuleFileParser(files, ruleParser).execute();
             Monad<SensitivityAnalysisRule> rules = collector.getRules();
@@ -70,9 +70,8 @@ public class EvaluateRules {
             for (String sensorName : warnings.keySet()) {
                 System.out.println(sensorName + ", " + warnings.get(sensorName) + ", " + rules.size());
             }
-            for (Predicate predicate : failedPredicates.get("17_3_GRFMET_10")) {
+            for (Predicate predicate : failedPredicates.get("17_8_GRFMET_17")) {
                 System.out.println(predicate);
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,13 +84,13 @@ public class EvaluateRules {
         }
     }
 
-    protected static class EvaluatingParser extends AlignRules.AlignedRuleParser {
+    protected static class FailingPredicatesRecorder extends AlignRules.AlignedRuleParser {
 
         private final Map<String, Double> sensorValues;
         private final Map<String, Integer> warnings;
         private final Map<String, List<Predicate>> failedPredicates;
 
-        private EvaluatingParser(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase, BuildingState buildingState) {
+        private FailingPredicatesRecorder(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase, BuildingState buildingState) {
             super(configuration, sensorsInDatabase);
             try {
                 this.sensorValues = buildingState.fetchSensorValues();
@@ -110,9 +109,11 @@ public class EvaluateRules {
         protected List<Predicate> collectPredicates(List<String> ruleBodyTokens) {
             List<Predicate> predicates = super.collectPredicates(ruleBodyTokens);
             for (PredicateMapEntry mapEntry : new PredicateMap(predicates).byLeftOperand()) {
+
                 for (Predicate predicate : mapEntry.getPredicates()) {
                     if (!evaluatePredicate(predicate)) {
                         System.err.println("False evaluation: " + predicate.toString());
+
                         recordFail(predicate);
                         incrementWarning(predicate.getLeftOperand().asString());
                     }
@@ -159,4 +160,57 @@ public class EvaluateRules {
             }
         }
     }
+
+    protected static class EvaluatingParser extends AlignRules.AlignedRuleParser {
+
+        private int firedRules;
+
+        private final Map<String, Double> sensorValues;
+        private final Map<String, Integer> warnings;
+        private final Map<String, List<Predicate>> failedPredicates;
+
+        private EvaluatingParser(RuleParserConfiguration configuration, Collection<String> sensorsInDatabase, BuildingState buildingState) {
+            super(configuration, sensorsInDatabase);
+            try {
+                this.sensorValues = buildingState.fetchSensorValues();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not calculate building state. Error: " + e.getMessage());
+            }
+            this.warnings = new HashMap<String, Integer>();
+            this.failedPredicates = new HashMap<String, List<Predicate>>();
+        }
+
+        @Override
+        protected List<Predicate> collectPredicates(List<String> ruleBodyTokens) {
+            List<Predicate> predicates = super.collectPredicates(ruleBodyTokens);
+
+            boolean evaluation = true;
+            for (Predicate predicate : predicates) {
+                evaluation = evaluation && evaluatePredicate(predicate);
+            }
+            if (evaluation) {
+                firedRules = firedRules + 1;
+            }
+
+            return predicates;
+        }
+
+        public Map<String, List<Predicate>> getFailedPredicates() {
+            return failedPredicates;
+        }
+
+        protected boolean evaluatePredicate(Predicate predicate) {
+            Double sensorValue = sensorValues.get(predicate.getLeftOperand().asString());
+            Double rightOperand = predicate.getRightOperand().asDouble();
+            switch (predicate.getOperator()) {
+                case GREATER_THAN_OR_EQUAL:
+                    return sensorValue >= rightOperand;
+                case LESS_THAN_OR_EQUAL:
+                    return sensorValue <= rightOperand;
+                default:
+                    throw new RuntimeException("Operator not implementeed: " + predicate.getOperator().literal);
+            }
+        }
+    }
+
 }

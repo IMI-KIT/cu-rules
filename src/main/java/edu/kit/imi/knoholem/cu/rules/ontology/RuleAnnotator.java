@@ -36,6 +36,7 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         annotations.add(ruleIDAnnotation(incrementRuleId()));
         annotations.add(ruleSuggestionAnnotation(getSuggestionText(input)));
         annotations.add(ruleWeightAnnotation(input.getMetadata().getWeight()));
+        annotations.add(ruleZoneIdAnnotation(input.getMetadata().getZoneId()));
         annotations.add(ruleReductionAnnotation((float) input.getMetadata().getReduction().doubleValue()));
         annotations.add(ruleTypeAnnotation(input.getMetadata().getType()));
         return annotations;
@@ -77,10 +78,20 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
         return "hasRuleType";
     }
 
+    private String zoneIdPropertyName() {
+        return "hasZoneId";
+    }
+
     private OWLAnnotation ruleIDAnnotation(int ruleId) {
         return ontology.getFactory().getOWLAnnotation(
                 ontology.getFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
                 ontology.getFactory().getOWLLiteral(createRuleId(ruleId)));
+    }
+
+    private OWLAnnotation ruleZoneIdAnnotation(String zoneId) {
+        return ontology.getFactory().getOWLAnnotation(
+                ontology.getFactory().getOWLAnnotationProperty(ontology.iri(zoneIdPropertyName())),
+                ontology.getFactory().getOWLLiteral(zoneId));
     }
 
     private OWLAnnotation ruleReductionAnnotation(Float reductionRate) {
