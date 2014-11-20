@@ -1,24 +1,24 @@
 package edu.kit.imi.knoholem.cu.rules;
 
+import edu.kit.imi.knoholem.cu.rules.atoms.Predicate;
+import edu.kit.imi.knoholem.cu.rules.atoms.SensitivityAnalysisRule;
 import edu.kit.imi.knoholem.cu.rules.functions.Collect;
 import edu.kit.imi.knoholem.cu.rules.functions.Monad;
-import edu.kit.imi.knoholem.cu.rules.parser.AlignedRuleParser;
+import edu.kit.imi.knoholem.cu.rules.parser.FalsePredicatesRecorder;
 import edu.kit.imi.knoholem.cu.rules.parser.RuleParserConfiguration;
-import edu.kit.imi.knoholem.cu.rules.parser.RulePrinter;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  */
-public class AlignRules {
-
+public class FalsePredicates {
     public static void main(String[] args) {
         String url = args[0];
         String user = args[1];
@@ -35,11 +35,11 @@ public class AlignRules {
 
         List<String> files = Arrays.asList(args).subList(9, args.length);
         RuleParserConfiguration ruleParserConfiguration = RuleParserConfiguration.getDefaultConfiguration();
-        SensorsDatabase alignRules = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
+        SensorsDatabase sensorDatabase = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
 
         Connection connection = null;
         try {
-            connection = alignRules.initializeConnection();
+            connection = sensorDatabase.initializeConnection();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -53,7 +53,7 @@ public class AlignRules {
 
         Set<String> sensorsInDatabase = null;
         try {
-            sensorsInDatabase = alignRules.fetchAllNames(connection);
+            sensorsInDatabase = sensorDatabase.fetchAllNames(connection);
         } catch (SQLException e) {
             System.err.println("Could not fetch rules.");
             e.printStackTrace();
@@ -61,12 +61,26 @@ public class AlignRules {
         }
 
         System.err.println("Fetched " + sensorsInDatabase.size() + " sensors.");
-        AlignedRuleParser ruleParser = new AlignedRuleParser(ruleParserConfiguration, sensorsInDatabase);
+
+        BuildingState buildingState = new BuildingState(sensorDatabase);
+        FalsePredicatesRecorder ruleParser = null;
+        try {
+            ruleParser = new FalsePredicatesRecorder(ruleParserConfiguration, buildingState.fetchSensorValues());
+        } catch (Exception e) {
+            System.err.println("Cannot initialize parser. Reason: " + e.getMessage());
+            System.exit(1);
+        }
+
         try {
             Collect collector = new ConvertRules.MultipleRuleFileParser(files, ruleParser).execute();
-            Monad<String> alignedRules = collector.getRules().map(new RulePrinter(ruleParserConfiguration, new DecimalFormat("0.00")));
-            for (String name : alignedRules) {
-                System.out.println(name);
+            Monad<SensitivityAnalysisRule> rules = collector.getRules();
+            Map<String, List<Predicate>> failedPredicates = ruleParser.getFailedPredicates();
+            Map<String, Integer> warnings = ruleParser.getWarnings();
+            for (String sensorName : warnings.keySet()) {
+                System.out.println(sensorName + ", " + warnings.get(sensorName) + ", " + rules.size());
+            }
+            for (Predicate predicate : failedPredicates.get("17_8_GRFMET_17")) {
+                System.out.println(predicate);
             }
         } catch (IOException e) {
             e.printStackTrace();
