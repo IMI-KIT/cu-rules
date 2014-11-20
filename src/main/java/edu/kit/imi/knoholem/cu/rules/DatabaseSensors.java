@@ -36,7 +36,11 @@ public class DatabaseSensors {
             System.exit(1);
         }
 
-        SensorsDatabase sensorsDatabase = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
+        SensorsDatabase sensorsDatabase = new SensorsDatabase(url, user, password,
+                sensorsHistoryTable, setpointsHistoryTable,
+                sensorsTable, setpointsTable,
+                sensorColumn, setpointColumn);
+
         Connection connection = null;
         try {
             connection = sensorsDatabase.initializeConnection();

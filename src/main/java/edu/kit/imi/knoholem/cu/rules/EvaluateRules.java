@@ -30,7 +30,10 @@ public class EvaluateRules {
 
         List<String> files = Arrays.asList(args).subList(9, args.length);
         RuleParserConfiguration ruleParserConfiguration = RuleParserConfiguration.getDefaultConfiguration();
-        SensorsDatabase sensorDatabase = new SensorsDatabase(url, user, password, sensorsHistoryTable, setpointsHistoryTable, sensorsTable, setpointsTable, sensorColumn, setpointColumn);
+        SensorsDatabase sensorDatabase = new SensorsDatabase(url, user, password,
+                sensorsHistoryTable, setpointsHistoryTable,
+                sensorsTable, setpointsTable,
+                sensorColumn, setpointColumn);
 
         Connection connection = null;
         try {
