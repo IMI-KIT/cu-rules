@@ -50,11 +50,28 @@ public class RuleAnnotator implements Function<SensitivityAnalysisRule, Set<OWLA
     protected String getSuggestionText(SensitivityAnalysisRule rule) {
         Predicate predicate = rule.getConsequent().iterator().next();
         String individualName = predicate.getLeftOperand().asString();
+        String sensorType = readableSensorType(ontology.getRepresentativeClass(individualName));
         if (configuration.isToggable(predicate)) {
             String toggleValue = predicate.getRightOperand().asDouble() == 0d ? "off" : "on";
-            return "Switch \"" + individualName + "\" " + toggleValue + ".";
+            return "Switch " + sensorType + " \"" + individualName + "\" " + toggleValue + ".";
         } else {
-            return "Set \"" + individualName + "\" to \"" + predicate.getRightOperand().asString() + "\".";
+            return "Set " + sensorType + " \"" + individualName + "\" to \"" + predicate.getRightOperand().asString() + "\".";
+        }
+    }
+
+    protected String readableSensorType(String representativeClass) {
+        if (representativeClass == null) {
+            return "";
+        } else {
+            StringBuilder result = new StringBuilder();
+            for (int index = 0; index < representativeClass.length(); index++) {
+                char currentCharacter = representativeClass.charAt(index);
+                if (Character.isUpperCase(currentCharacter)) {
+                    result.append(" ");
+                }
+                result.append(Character.toLowerCase(currentCharacter));
+            }
+            return result.toString().trim();
         }
     }
 
