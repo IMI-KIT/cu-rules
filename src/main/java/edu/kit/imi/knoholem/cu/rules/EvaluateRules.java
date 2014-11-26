@@ -51,7 +51,7 @@ public class EvaluateRules {
 
         Set<String> sensorsInDatabase = null;
         try {
-            sensorsInDatabase = sensorDatabase.fetchAllNames(connection);
+            sensorsInDatabase = sensorDatabase.fetchAllCurrentNames(connection);
         } catch (SQLException e) {
             System.err.println("Could not fetch rules.");
             e.printStackTrace();

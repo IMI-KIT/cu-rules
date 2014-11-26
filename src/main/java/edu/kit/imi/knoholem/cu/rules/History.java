@@ -58,13 +58,13 @@ public class History {
 
         printer.printRecord(header());
         System.err.println("Fetching sensors...");
-        for (String sensorName : sensorsDatabase.fetchSensorNames(connection)) {
+        for (String sensorName : sensorsDatabase.fetchCurrentSensorNames(connection)) {
             System.err.println("Calculating statistics for `" + sensorName + "'");
             printer.printRecord(statisticsRecord(sensorName, sensorStats(sensorName)));
         }
 
         System.err.println("Fetching setpoints...");
-        for (String setpoint : sensorsDatabase.fetchSetpointNames(connection)) {
+        for (String setpoint : sensorsDatabase.fetchCurrentSetpointNames(connection)) {
             System.err.println("Calculating statistics for `" + setpoint + "'");
             printer.printRecord(statisticsRecord(setpoint, setpointStats(setpoint)));
         }

@@ -74,11 +74,11 @@ public class SensorsDatabase {
         return DriverManager.getConnection(url, user, password);
     }
 
-    public Set<String> fetchAllNames(Connection connection) throws SQLException {
+    public Set<String> fetchAllCurrentNames(Connection connection) throws SQLException {
         Set<String> allNames = new HashSet<String>();
 
-        allNames.addAll(fetchSensorNames(connection));
-        allNames.addAll(fetchSetpointNames(connection));
+        allNames.addAll(fetchCurrentSensorNames(connection));
+        allNames.addAll(fetchCurrentSetpointNames(connection));
 
         return allNames;
     }
@@ -89,11 +89,11 @@ public class SensorsDatabase {
         return resultSet.getDouble(1);
     }
 
-    public Set<String> fetchSetpointNames(Connection connection) throws SQLException {
+    public Set<String> fetchCurrentSetpointNames(Connection connection) throws SQLException {
         return collectNames(connection, setpointsQuery(setpointColumn, setpointsTable));
     }
 
-    public Set<String> fetchSensorNames(Connection connection) throws SQLException {
+    public Set<String> fetchCurrentSensorNames(Connection connection) throws SQLException {
         return collectNames(connection, sensorsQuery(sensorColumn, sensorsTable));
     }
 
@@ -125,5 +125,4 @@ public class SensorsDatabase {
         }
         return sensorNames;
     }
-
 }

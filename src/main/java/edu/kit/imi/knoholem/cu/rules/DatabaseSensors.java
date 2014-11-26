@@ -57,7 +57,7 @@ public class DatabaseSensors {
 
         Set<String> sensors = null;
         try {
-            sensors = sensorsDatabase.fetchAllNames(connection);
+            sensors = sensorsDatabase.fetchAllCurrentNames(connection);
         } catch (SQLException e) {
             System.err.println("Could not fetch sensor identifiers from `" + url + "'. Reason: " + e.getMessage());
             System.exit(1);

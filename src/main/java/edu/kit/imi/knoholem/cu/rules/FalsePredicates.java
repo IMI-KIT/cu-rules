@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Evaluates individual rule predicates against the current building state reporting the failing ones.
+ *
  * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  */
 public class FalsePredicates {
@@ -56,7 +58,7 @@ public class FalsePredicates {
 
         Set<String> sensorsInDatabase = null;
         try {
-            sensorsInDatabase = sensorDatabase.fetchAllNames(connection);
+            sensorsInDatabase = sensorDatabase.fetchAllCurrentNames(connection);
         } catch (SQLException e) {
             System.err.println("Could not fetch rules.");
             e.printStackTrace();

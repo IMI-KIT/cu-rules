@@ -56,9 +56,9 @@ public class AlignRules {
 
         Set<String> sensorsInDatabase = null;
         try {
-            sensorsInDatabase = alignRules.fetchAllNames(connection);
+            sensorsInDatabase = alignRules.fetchAllCurrentNames(connection);
         } catch (SQLException e) {
-            System.err.println("Could not fetch rules.");
+            System.err.println("Could not fetch rules. " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }

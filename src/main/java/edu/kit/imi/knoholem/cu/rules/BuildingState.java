@@ -19,7 +19,7 @@ public class BuildingState {
         Map<String, Double> values = new HashMap<String, Double>();
         Connection connection = sensorsDatabase.initializeConnection();
 
-        for (String sensorName : sensorsDatabase.fetchSensorNames(connection)) {
+        for (String sensorName : sensorsDatabase.fetchCurrentSensorNames(connection)) {
             values.put(sensorName, sensorsDatabase.fetchCurrentSensorValue(connection, sensorName));
         }
 
