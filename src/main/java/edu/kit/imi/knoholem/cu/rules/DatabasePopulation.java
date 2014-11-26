@@ -24,20 +24,10 @@ public class DatabasePopulation {
         this.context = context;
     }
 
-    private Connection initializeConnection() {
-        try {
-            return sensorsDatabase.initializeConnection();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not load the database driver.", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Could not initialize a database connection.", e);
-        }
-    }
-
     public Set<String> fetchMissingEntities() {
-        Set<String> result = new HashSet<String>();
         Connection connection = initializeConnection();
 
+        Set<String> result = new HashSet<String>();
         try {
             result.addAll(fetchMissingSensors(connection));
             result.addAll(fetchMissingSetpoints(connection));
@@ -90,6 +80,16 @@ public class DatabasePopulation {
             }
         }
         return result;
+    }
+
+    protected Connection initializeConnection() {
+        try {
+            return sensorsDatabase.initializeConnection();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not load the database driver.", e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not initialize a database connection.", e);
+        }
     }
 
     protected static void closeConnection(Connection connection) {
