@@ -62,7 +62,7 @@ public class DatabasePopulation {
 
     public Set<String> fetchMissingSensors(Connection connection) throws SQLException {
         Set<String> result = new HashSet<String>();
-        for (String setpointId : sensorsDatabase.fetchCurrentSetpointNames(connection)) {
+        for (String setpointId : sensorsDatabase.fetchCurrentSensorNames(connection)) {
             if (!context.containsIndividual(setpointId)) {
                 result.add(setpointId);
             }
