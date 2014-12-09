@@ -20,6 +20,8 @@ public class IndividualInClassTest {
 
     @Before
     public void setup() throws URISyntaxException, OWLOntologyCreationException {
+        System.setProperty("line.separator", "\n");
+
         URL resourceURL = getClass().getResource("/ontology.n3");
         Path path = Paths.get(resourceURL.toURI());
         ontologyContext = OntologyContext.load(path.toFile());
