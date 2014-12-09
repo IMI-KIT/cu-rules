@@ -3,6 +3,7 @@ package edu.kit.imi.knoholem.cu.rules.ontology;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 
@@ -22,7 +23,7 @@ import java.util.Set;
  * Provides shorthands for accessing individuals, properties and classes in the namespace of the ontology document.
  * </p>
  *
- * @author <a href="mailto:kiril.tonev@kit.edu">Tonev</a>
+ * @author <a href="mailto:kiril.tonev@kit.edu">Kiril Tonev</a>
  * @see org.semanticweb.owlapi.model.OWLOntology
  * @see org.semanticweb.owlapi.model.OWLOntologyManager
  * @see org.semanticweb.owlapi.model.OWLDataFactory
@@ -35,7 +36,8 @@ public class OntologyContext {
     private final OWLOntology ontology;
     private final OWLOntologyManager manager;
     private final OWLDataFactory factory;
-    private final OWLReasoner reasoner;
+
+    private OWLReasoner reasoner;
 
     /**
      * Default constructor.
@@ -84,6 +86,14 @@ public class OntologyContext {
 
     public OWLDataFactory getFactory() {
         return factory;
+    }
+
+    public void setReasoner(OWLReasonerFactory factory) {
+        this.reasoner = factory.createReasoner(ontology);
+    }
+
+    public OWLReasoner getReasoner() {
+        return reasoner;
     }
 
     public Set<String> individuals() {
