@@ -19,6 +19,7 @@ public class TemplatesTest {
 
     @Before
     public void setup() throws URISyntaxException {
+        System.setProperty("line.separator", "\n");
         templates = new STGroupFile("templates/templates.stg");
     }
 
