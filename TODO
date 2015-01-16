@@ -2,6 +2,7 @@
 
 Here's a current list of todo items, more or less ordered by priority:
 
+ * CLI processing.
  * Sanitize should check the rule format.
  * Refactor OntologySWRLConverterConfiguration (configuration based maybe?).
  * Make the parser configuration automatically configurable (based on keys). To achieve this, split the configuration in rule syntax and predicate syntax.

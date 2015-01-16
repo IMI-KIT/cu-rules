@@ -11,6 +11,16 @@
         <java.version>1.6</java.version>
     </properties>
 
+    <inceptionYear>2014</inceptionYear>
+
+    <developers>
+      <developer>
+        <id>tonev</id>
+        <name>Kiril Tonev</name>
+        <email>kiril.tonev@kit.edu</email>
+      </developer>
+    </developers>
+
     <dependencies>
 
         <dependency>
